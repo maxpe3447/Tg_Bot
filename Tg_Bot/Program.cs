@@ -8,13 +8,13 @@ namespace Tg_Bot
 {
     class Program
     {
-        private static string tokeN { get; set; } = "1872032989:AAEdfnOLIQiQj1OJCheWGDBmPSuAhsBH7gw";
+        private static string Token { get; set; } = "1872032989:AAEdfnOLIQiQj1OJCheWGDBmPSuAhsBH7gw";
         private static TelegramBotClient client;
 
 
         static void Main(string[] args)
         {
-            client = new TelegramBotClient(tokeN);
+            client = new TelegramBotClient(Token);
 
             client.StartReceiving();
 
