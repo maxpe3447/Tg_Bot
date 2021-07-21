@@ -12,7 +12,6 @@ namespace Tg_Bot
         private static string Token { get; set; } = "1872032989:AAEdfnOLIQiQj1OJCheWGDBmPSuAhsBH7gw";
         private static TelegramBotClient client;
 
-
         static void Main(string[] args)
         {
             client = new TelegramBotClient(Token);
