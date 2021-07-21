@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using Telegram.Bot;
 using Telegram.Bot.Args;
 using Telegram.Bot.Types.ReplyMarkups;
-using System.IO;
 
 namespace Tg_Bot
 {
