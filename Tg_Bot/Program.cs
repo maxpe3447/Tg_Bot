@@ -8,17 +8,17 @@ namespace Tg_Bot
 {
     class Program
     {
-        private static string token { get; set; } = "1872032989:AAEdfnOLIQiQj1OJCheWGDBmPSuAhsBH7gw";
+        private static string tokeN { get; set; } = "1872032989:AAEdfnOLIQiQj1OJCheWGDBmPSuAhsBH7gw";
         private static TelegramBotClient client;
 
 
         static void Main(string[] args)
         {
-            client = new TelegramBotClient(token);
+            client = new TelegramBotClient(tokeN);
 
             client.StartReceiving();
 
-            client.OnMessage += StartMessege;           
+            client.OnMessage += StartMessege;
 
             Console.ReadLine();
             client.StopReceiving();
@@ -30,10 +30,10 @@ namespace Tg_Bot
             if (msg != null)
             {
                 if (msg.Text == "/start")
-                await client.SendTextMessageAsync(msg.Chat.Id,
-                        "Добро пожаловать в данный чат-бот!🙃\n" +
-                        "Здесь есть почти вся необходимая информация что бы учиться на 2м курсе😌\n" +
-                        "Удачи в обучении!✨", replyMarkup: GetButtons());                    
+                    await client.SendTextMessageAsync(msg.Chat.Id,
+                            "Добро пожаловать в данный чат-бот!🙃\n" +
+                            "Здесь есть почти вся необходимая информация что бы учиться на 2м курсе😌\n" +
+                            "Удачи в обучении!✨", replyMarkup: GetButtons());
 
                 switch (msg.Text)
                 {
@@ -54,9 +54,9 @@ namespace Tg_Bot
                      */
 
                     case "Расписание!":
-                        
-                    var inlineKeyboard_1 = new InlineKeyboardMarkup(new[]
-                    {
+
+                        var inlineKeyboard_1 = new InlineKeyboardMarkup(new[]
+                        {
                         new[]
                         {
                             InlineKeyboardButton.WithCallbackData("Расписание по числителю!")
@@ -70,10 +70,18 @@ namespace Tg_Bot
                             InlineKeyboardButton.WithCallbackData("Расписание звонков!")
                         }
                     });
-                    await client.SendTextMessageAsync(msg.From.Id, "Какое расписание вы хотите?", replyMarkup: inlineKeyboard_1);
-
+                        await client.SendTextMessageAsync(msg.From.Id, "Какое расписание вы хотите?", replyMarkup: inlineKeyboard_1);
 
                         break;
+
+                    /*
+                     х6
+                     Предметы:
+                          - Предмет:
+                                *Преподаватели -> Имена - Связь - 
+
+                     */
+
 
                     case "Предметы!":
                         var inlineKeyboard_2 = new InlineKeyboardMarkup(new[]
@@ -97,6 +105,11 @@ namespace Tg_Bot
                         await client.SendTextMessageAsync(msg.From.Id, "Выберите предмет:", replyMarkup: inlineKeyboard_2);
                         break;
 
+                    /*
+
+                    Ссылка на чат - "Вопрос-ответ" 
+
+                     */
 
                     case "Вопрос-Ответ!":
                         var inlineKeyboard_3 = new InlineKeyboardMarkup(new[]
@@ -109,13 +122,82 @@ namespace Tg_Bot
                         await client.SendTextMessageAsync(msg.From.Id, "Держи!", replyMarkup: inlineKeyboard_3);
                         break;
 
+
+                    /*
+                    х6
+                     Предметы:
+                          - Предмет:
+                                *вид урока и ссылка в кнопке
+
+                     */
+
+                    case "Конференции!":
+
+
+
+                        break;
+
+
+                    /*
+
+                    Мой контакт 
+
+                     */
+
                     case "Связь!":
                         await client.SendContactAsync(msg.Chat.Id, "+380675115257", "Настя", "Никулина");
                         break;
 
                 }
 
-                switch (msg.Text)
+            }
+        }
+
+        private static IReplyMarkup GetButtons()
+        {
+            return new ReplyKeyboardMarkup
+            {
+                Keyboard = new List<List<KeyboardButton>>
+                {
+                    new List<KeyboardButton> { new KeyboardButton { Text = "Расписание!" } },
+                    new List<KeyboardButton> { new KeyboardButton { Text = "Предметы!" }, new KeyboardButton { Text = "Вопрос-Ответ!" }, new KeyboardButton { Text = "Конференции!" } },
+                    new List<KeyboardButton> { new KeyboardButton { Text = "Связь!" } }
+                }
+            };
+        }
+    }
+
+}
+
+/*
+ 
+                            КНОПКИ РАСПИСАНИЕ И ПРЕДМЕТЫ
+
+ if(msg.Text == "Расписание!")
+                {
+                    
+                    if (msg.Text == "Расписание по числителю!")
+                    {
+                        await client.SendTextMessageAsync(msg.Chat.Id, "Вот расписание по числителю:");
+                    }
+                    if (msg.Text == "Расписание по знаменателю!")
+                    {
+                        await client.SendTextMessageAsync(msg.Chat.Id, "Вот расписание по знаменателю:");
+                    }
+                    if (msg.Text == "Расписание звонков!")
+                    {
+                        await client.SendTextMessageAsync(msg.Chat.Id, "Вот расписание звонков:");
+                    }
+
+                }
+ 
+ */
+
+
+
+/*
+ 
+ switch (msg.Text)
                 {
                     case "Расписание по числителю!":
 
@@ -165,63 +247,5 @@ namespace Tg_Bot
                         await client.SendTextMessageAsync(msg.Chat.Id, "6:");
                         break;
                 }
-
-            }            
-        }
-
-        private static IReplyMarkup GetButtons()
-        {
-            return new ReplyKeyboardMarkup
-            {
-                Keyboard = new List<List<KeyboardButton>>
-                {
-                    new List<KeyboardButton> { new KeyboardButton { Text = "Расписание!" } },
-                    new List<KeyboardButton> { new KeyboardButton { Text = "Предметы!" }, new KeyboardButton { Text = "Вопрос-Ответ!" } },
-                    new List<KeyboardButton> { new KeyboardButton { Text = "Связь!" } }
-                }
-            };
-        }
-    }
-        
-    }
-
-/*
- 
-if(msg.Text == "Расписание по числителю!")
-{
-    client.SendTextMessageAsync(msg.Chat.Id, "Вот расписание по числителю:");
-}
-if(msg.Text == "Расписание по знаменателю!")
-{
-    client.SendTextMessageAsync(msg.Chat.Id, "Вот расписание по знаменателю:");
-}
-if (msg.Text == "Расписание звонков!")
-{
-    client.SendTextMessageAsync(msg.Chat.Id, "Вот расписание звонков:");
-}
  
  */
-
-
-/*
- 
- if(msg.Text == "Расписание!")
-                {
-                    
-                    if (msg.Text == "Расписание по числителю!")
-                    {
-                        await client.SendTextMessageAsync(msg.Chat.Id, "Вот расписание по числителю:");
-                    }
-                    if (msg.Text == "Расписание по знаменателю!")
-                    {
-                        await client.SendTextMessageAsync(msg.Chat.Id, "Вот расписание по знаменателю:");
-                    }
-                    if (msg.Text == "Расписание звонков!")
-                    {
-                        await client.SendTextMessageAsync(msg.Chat.Id, "Вот расписание звонков:");
-                    }
-
-                }
- 
- */
-
