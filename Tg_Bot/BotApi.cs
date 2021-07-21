@@ -4,6 +4,7 @@ using Telegram.Bot;
 using Telegram.Bot.Args;
 using Telegram.Bot.Types.ReplyMarkups;
 
+using System.IO;
 
 namespace Tg_Bot
 {
@@ -165,6 +166,12 @@ namespace Tg_Bot
                 }
             };
         }
+
+        private static void foo()
+        {
+
+        }
+
     }
 
 }
