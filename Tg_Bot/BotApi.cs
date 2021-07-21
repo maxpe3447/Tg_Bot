@@ -10,17 +10,25 @@ namespace Tg_Bot
 {
     class Program
     {
-        private static string Token { get; set; } = "1872032989:AAEdfnOLIQiQj1OJCheWGDBmPSuAhsBH7gw";
+        private static string Token { get; set; }
         private static TelegramBotClient client;
 
         static void Main(string[] args)
         {
-            client = new TelegramBotClient(Token);
+            using (FileStream fstream = File.OpenRead("token.txt"))
+            {
+                byte[] byteToken = new byte[fstream.Length];
+                fstream.Read(byteToken, 0, byteToken.Length);
+                Token = System.Text.Encoding.Default.GetString(byteToken);
+            }
+                client = new TelegramBotClient(Token);
+
+            Console.WriteLine();
 
             client.StartReceiving();
 
             client.OnMessage += StartMessege;
-
+            
             Console.ReadLine();
             client.StopReceiving();
         }
@@ -60,15 +68,15 @@ namespace Tg_Bot
                         {
                         new[]
                         {
-                            InlineKeyboardButton.WithCallbackData("Расписание по числителю!")
+                            InlineKeyboardButton.WithCallbackData("Расписание по числителю!", "числитель")
                         },
                         new[]
                         {
-                            InlineKeyboardButton.WithCallbackData("Расписание по знаменателю!")
+                            InlineKeyboardButton.WithCallbackData("Расписание по знаменателю!", "знаменатель")
                         },
                         new[]
                         {
-                            InlineKeyboardButton.WithCallbackData("Расписание звонков!")
+                            InlineKeyboardButton.WithCallbackData("Расписание звонков!", "Звонки")
                         }
                     });
                         await client.SendTextMessageAsync(msg.From.Id, "Какое расписание вы хотите?", replyMarkup: inlineKeyboard_1);
@@ -148,7 +156,8 @@ namespace Tg_Bot
                     case "Связь!":
                         await client.SendContactAsync(msg.Chat.Id, "+380675115257", "Настя", "Никулина");
                         break;
-
+                    
+                        //if(e.Message.Type == Telegram.Bot.Types.Enums.MessageType.)
                 }
 
             }
@@ -165,11 +174,6 @@ namespace Tg_Bot
                     new List<KeyboardButton> { new KeyboardButton { Text = "Связь!" } }
                 }
             };
-        }
-
-        private static void foo()
-        {
-
         }
 
     }
