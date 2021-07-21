@@ -4,6 +4,7 @@ using Telegram.Bot;
 using Telegram.Bot.Args;
 using Telegram.Bot.Types.ReplyMarkups;
 using System.IO;
+using System.IO.Compression;
 
 namespace Tg_Bot
 {
@@ -11,7 +12,6 @@ namespace Tg_Bot
     {
         private static string Token { get; set; } = "1872032989:AAEdfnOLIQiQj1OJCheWGDBmPSuAhsBH7gw";
         private static TelegramBotClient client;
-
 
         static void Main(string[] args)
         {
