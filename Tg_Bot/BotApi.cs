@@ -10,21 +10,122 @@ namespace Tg_Bot
 {
     class Program
     {
-        private static string Token { get; set; } = "1872032989:AAEdfnOLIQiQj1OJCheWGDBmPSuAhsBH7gw";
+        private static string Token { get; set; }
         private static TelegramBotClient client;
 
         static void Main(string[] args)
         {
-            client = new TelegramBotClient(Token);
+            using (FileStream fstream = new FileStream("token.txt", FileMode.Open))
+            {
+                using (StreamReader reader = new StreamReader(fstream))
+                    Token = reader.ReadLine();
+            }
+                client = new TelegramBotClient(Token);
 
-            client.StartReceiving();
+            Console.WriteLine(client.GetMeAsync().Result);
+            try
+            {
+                client.StartReceiving();
 
-            client.OnMessage += StartMessege;
+                client.OnMessage += StartMessege;
 
+                client.OnCallbackQuery += CallBackInlineQuaryForNumerator;
+                //client.OnInlineQuery += StartInlineMessage;
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                client.StopReceiving();
+            }
             Console.ReadLine();
             client.StopReceiving();
         }
 
+        private static async void CallBackInlineQuaryForNumerator(object sender, CallbackQueryEventArgs callBack)
+        {
+            await client.AnswerCallbackQueryAsync(callBack.CallbackQuery.Id, $"ля, кого я вижу, да, {callBack.CallbackQuery.From.FirstName} 🤨");
+            Console.WriteLine(callBack.CallbackQuery.From.FirstName + callBack.CallbackQuery.Data + '\t' + callBack.CallbackQuery.InlineMessageId);
+            string[] date = callBack.CallbackQuery.Data.Split('|');
+
+            byte type = 0, id = 1;
+
+            
+
+            var inlineKeyboard_DayOfWeek = new InlineKeyboardMarkup(new[]
+            {
+
+                new[]
+                {
+                    InlineKeyboardButton.WithCallbackData("Пн", $"Monday|{date[id]}"),
+                    InlineKeyboardButton.WithCallbackData("Вт", $"Tuesday|{date[id]}")
+                },
+                //new[]
+                //{
+                    
+                //},
+                new[]
+                {
+                    InlineKeyboardButton.WithCallbackData("Ср", $"Wednesday|{date[id]}"),
+                    InlineKeyboardButton.WithCallbackData("Чт", $"Thursday|{date[id]}")
+                },
+                  new[]
+                {
+                    InlineKeyboardButton.WithCallbackData("Пт", $"Friday|{date[id]}")
+                },
+                  new[]
+                {
+                    InlineKeyboardButton.WithCallbackData("Назад🔙", $"Back|{date[id]}")
+                }
+            });
+            await client.SendTextMessageAsync(date[id], "Выбери день недели:", replyMarkup: inlineKeyboard_DayOfWeek);
+
+            client.OnCallbackQuery += CallBackInlineQuaryForDayOfWeekOfNumeratot;
+            client.OnCallbackQuery -= CallBackInlineQuaryForDayOfWeekOfNumeratot;
+        }
+
+        private static async void CallBackInlineQuaryForDayOfWeekOfNumeratot(object sender, CallbackQueryEventArgs callback)
+        {
+            string[] date = callback.CallbackQuery.Data.Split('|');
+            byte day = 0, id = 1;
+            await client.SendTextMessageAsync(date[id], $"Ты выбрал {date[day]}:\n");
+            switch (date[day])
+            {
+                case "Monday":
+                    await client.SendTextMessageAsync(date[id], "No info");
+                    break;
+                case "Tuesday":
+                    await client.SendTextMessageAsync(date[id], "No info");
+                    break;
+                case "Wednesday":
+                    await client.SendTextMessageAsync(date[id], "No info");
+                    break;
+                case "Thursday":
+                    await client.SendTextMessageAsync(date[id], "No info");
+                    break;
+                case "Friday":
+                    await client.SendTextMessageAsync(date[id], "No info");
+                    break;
+                case "Back":
+                    //client.OnCallbackQuery -= CallBackInlineQuaryForDayOfWeekOfNumeratot;
+                    await client.SendTextMessageAsync(date[id], "Какое расписание вы хотите?", replyMarkup: inlineKeyboard_TimeTable);
+                    break;
+
+
+            }
+        }
+
+        //private static async void StartInlineMessage(object sender, InlineQueryEventArgs e)
+        //{
+        //    var inlineMsg = e.InlineQuery;
+        //    if(inlineMsg != null)
+        //    {
+        //        if (inlineMsg.ChatType.Value != null)
+        //        {
+        //            await client.SendTextMessageAsync("Hi!");
+        //        }
+        //    }
+        //}
+        static InlineKeyboardMarkup inlineKeyboard_TimeTable;
         private static async void StartMessege(object sender, MessageEventArgs e)
         {
             var msg = e.Message;
@@ -56,22 +157,24 @@ namespace Tg_Bot
 
                     case "Расписание!":
 
-                        var inlineKeyboard_1 = new InlineKeyboardMarkup(new[]
+                        inlineKeyboard_TimeTable = new InlineKeyboardMarkup(new[]
                         {
                         new[]
                         {
-                            InlineKeyboardButton.WithCallbackData("Расписание по числителю!")
+                            InlineKeyboardButton.WithCallbackData("Расписание по числителю!", callbackData: $"числитель|{msg.From.Id}")
                         },
                         new[]
                         {
-                            InlineKeyboardButton.WithCallbackData("Расписание по знаменателю!")
+                            InlineKeyboardButton.WithCallbackData("Расписание по знаменателю!", callbackData: $"знаменатель|{msg.From.Id}")
                         },
                         new[]
                         {
-                            InlineKeyboardButton.WithCallbackData("Расписание звонков!")
+                            InlineKeyboardButton.WithCallbackData("Расписание звонков!", callbackData: $"Звонки|{msg.From.Id}")
                         }
+                        
                     });
-                        await client.SendTextMessageAsync(msg.From.Id, "Какое расписание вы хотите?", replyMarkup: inlineKeyboard_1);
+                        Console.WriteLine($"[{e.Message.From.FirstName}] - [{e.Message.From.Id}] - [{e.Message.From.Username}] | ");
+                        await client.SendTextMessageAsync(msg.From.Id, "Какое расписание вы хотите?", replyMarkup: inlineKeyboard_TimeTable);
 
                         break;
 
@@ -120,6 +223,7 @@ namespace Tg_Bot
                                 InlineKeyboardButton.WithUrl("Чат для вопросов!", "https://t.me/joinchat/V69YheCJ-Fb9q8mJ")
                             }
                         });
+
                         await client.SendTextMessageAsync(msg.From.Id, "Держи!", replyMarkup: inlineKeyboard_3);
                         break;
 
@@ -146,11 +250,24 @@ namespace Tg_Bot
                      */
 
                     case "Связь!":
-                        await client.SendContactAsync(msg.Chat.Id, "+380675115257", "Настя", "Никулина");
+                        
+                        string username;
+                        using (FileStream fstream = new FileStream("username.txt", FileMode.Open))
+                        {
+                            using (StreamReader reader = new StreamReader(fstream))
+                                username = reader.ReadLine();
+                                
+                        }
+
+                        await client.SendTextMessageAsync(msg.Chat.Id, username);
+                        //await client.SendContactAsync(msg.Chat.Id, );
                         break;
+                    
+                        //if(e.Message.Type == Telegram.Bot.Types.Enums.MessageType.)
 
+                        
                 }
-
+                //CurrentChatId = e.Message.Chat.Id;
             }
         }
 
@@ -165,11 +282,6 @@ namespace Tg_Bot
                     new List<KeyboardButton> { new KeyboardButton { Text = "Связь!" } }
                 }
             };
-        }
-
-        private static void foo()
-        {
-
         }
 
     }
