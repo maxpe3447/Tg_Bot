@@ -5,3 +5,5 @@
 *.ali
 /bin
 /obj
+/.vs
+*.suo
