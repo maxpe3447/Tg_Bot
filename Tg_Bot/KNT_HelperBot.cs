@@ -67,7 +67,8 @@ namespace Tg_Bot
         }
         private async void GetCallBordImage(CallbackQueryEventArgs callBack)
         {
-            await client.SendPhotoAsync(callBack.CallbackQuery.Data.Split('|')[id], "CallBord.jpg");
+            await client.AnswerCallbackQueryAsync(callBack.CallbackQuery.Id);
+            await client.SendPhotoAsync(callBack.CallbackQuery.Data.Split('|')[id], "https://github.com/maxpe3447/Tg_Bot/blob/develop/Tg_Bot/bin/Debug/net5.0/CallBoard.jpg?raw=true");
         }
         private async void TypeOfWeek(CallbackQueryEventArgs callBack)
         {
