@@ -17,8 +17,16 @@ namespace Tg_Bot
         private InlineKeyboardMarkup inlineKeyboard_TimeTable;
         byte type = 0, day = 1, id = 2;
 
-        //public delegate T CompletionSign<T> ();
-        //public event CompletionSign<ConsoleKey> completeSign;
+        public delegate void PauseForWork();
+        public event PauseForWork PauseForWorking;
+
+        private bool firstCheck;
+        public bool FirstCheck
+        {
+            get { return firstCheck; }
+            private set { firstCheck = value; }
+        }
+
         public KNT_HelperBot()
         {
             using (FileStream fstream = new FileStream("token.txt", FileMode.Open))
@@ -28,28 +36,54 @@ namespace Tg_Bot
             }
             client = new TelegramBotClient(Token);
 
+        }
+
+        public void StartReciving()
+        {
             Console.WriteLine(client.GetMeAsync().Result);
             try
             {
                 client.StartReceiving();
-
-                client.OnMessage += StartMessege;
-
-                client.OnCallbackQuery += CallBackInlineQuaryMain;
-                client.OnCallbackQuery += CallBackInlineQuaryForDayOfWeek;
-                
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
                 client.StopReceiving();
             }
-            Console.ReadKey();
-            //completeSign?.Invoke();
+        }
+        public void TurnOn_OfEvent()
+        {
+            try
+            {
+                client.OnMessage += StartMessege;
+                client.OnCallbackQuery += CallBackInlineQuaryMain;
+                client.OnCallbackQuery += CallBackInlineQuaryForDayOfWeek;
 
-            client.StopReceiving();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                client.StopReceiving();
+            }
         }
 
+        public void StopReciving()
+        {
+            if (PauseForWorking == null)
+            {
+                client.StopReceiving();
+
+                throw new KNTHelperBotException("------>\nThe object has no pause event\n<------\n", "add to Event of =>PauseForWorking<= function for pause:\n" +
+                    "for Example:\n" +
+                    "public void PauseIvent()\n" +
+                    "{\n" +
+                    "Console.ReadKey();\n" +
+                    "}\n");
+            }
+            PauseForWorking?.Invoke();
+            client.StopReceiving();
+
+        }
         [Obsolete]
         private void CallBackInlineQuaryMain(object sender, CallbackQueryEventArgs callBack)
         {
@@ -137,37 +171,69 @@ namespace Tg_Bot
         }
         private async void StartMessege(object sender, MessageEventArgs e)
         {
+
             var msg = e.Message;
             if (msg != null)
             {
-                if (msg.Text == "/start")
-                    await client.SendTextMessageAsync(msg.Chat.Id,
-                            "Добро пожаловать в данный чат-бот!🙃\n" +
-                            "Здесь есть почти вся необходимая информация что бы учиться на 2м курсе😌\n" +
-                            "Удачи в обучении!✨", replyMarkup: GetKeyBoardButtons());
-
-                switch (msg.Text)
+                bool userInBlackList = false;
+                try
                 {
+                    userInBlackList = Telegram_Client.CheckInBlackList(msg.From.Id.ToString());
+                }
+                catch(KNTHelperBotException ex)
+                {
+                    Console.WriteLine(ex.Message + "\n=======\n" + ex.GetWhatToDo());
+                }
 
-                    /*
-                     
-                     Расписание:
-                          - Числитель:
-                                * Выбор дня недели:
-                                     - Пн - Вт - Ср - Чт - Пт
+                if (!userInBlackList)
+                {
+                    if (msg.Text == "/start")
+                    {
+                        //if (FirstCheck)
 
-                          - Знаменатель
-                                * Выбор дня недели:
-                                     - Пн - Вт - Ср - Чт - Пт
-
-                          - Звонки      ->      Текст расписания звонков
-                     
-                     */
-
-                    case "Расписание!":
-
-                        inlineKeyboard_TimeTable = new InlineKeyboardMarkup(new[]
+                        //Telegram_Client.NewCheckOfUser(client, e);
+                        //if (Telegram_Client.NewCheckOfUser_Result)
+                        //{
+                        //    Console.WriteLine($"[{e.Message.From.FirstName}] - [{e.Message.From.Id}] - [{e.Message.From.Username}] | BAN!");
+                        //    goto EndOfListenOfMsg;
+                        //}
+                        if (!Telegram_Client.CheckingClient_IsFamiliar(msg.From.Id.ToString()))
                         {
+                            await client.SendTextMessageAsync(msg.Chat.Id, $"Слушай, {msg.From.FirstName}🤨 ты не отсюдого, тебе низя 😋");
+                            await client.SendTextMessageAsync(msg.Chat.Id, "😏");
+
+                            Console.WriteLine($"[{e.Message.From.FirstName}] - [{e.Message.From.Id}] - [{e.Message.From.Username}] | BAN!");
+                            goto EndOfListenOfMsg;
+                        }
+
+                        await client.SendTextMessageAsync(msg.Chat.Id,
+                                "Добро пожаловать в данный чат-бот!🙃\n" +
+                                "Здесь есть почти вся необходимая информация что бы учиться на 2м курсе😌\n" +
+                                "Удачи в обучении!✨", replyMarkup: GetKeyBoardButtons());
+                    }
+
+                    switch (msg.Text)
+                    {
+
+                        /*
+
+                         Расписание:
+                              - Числитель:
+                                    * Выбор дня недели:
+                                         - Пн - Вт - Ср - Чт - Пт
+
+                              - Знаменатель
+                                    * Выбор дня недели:
+                                         - Пн - Вт - Ср - Чт - Пт
+
+                              - Звонки      ->      Текст расписания звонков
+
+                         */
+
+                        case "Расписание!":
+
+                            inlineKeyboard_TimeTable = new InlineKeyboardMarkup(new[]
+                            {
                         new[]
                         {
                             InlineKeyboardButton.WithCallbackData("Расписание по числителю!", callbackData: $"Numerator||{msg.From.Id}")
@@ -182,23 +248,23 @@ namespace Tg_Bot
                         }
 
                     });
-                        Console.WriteLine($"[{e.Message.From.FirstName}] - [{e.Message.From.Id}] - [{e.Message.From.Username}] | ");
-                        await client.SendTextMessageAsync(msg.From.Id, "Какое расписание вы хотите?", replyMarkup: inlineKeyboard_TimeTable);
+                            Console.WriteLine($"[{e.Message.From.FirstName}] - [{e.Message.From.Id}] - [{e.Message.From.Username}] | ");
+                            await client.SendTextMessageAsync(msg.From.Id, "Какое расписание вы хотите?", replyMarkup: inlineKeyboard_TimeTable);
 
-                        break;
+                            break;
 
-                    /*
-                     х6
-                     Предметы:
-                          - Предмет:
-                                *Преподаватели -> Имена - Связь - 
+                        /*
+                         х6
+                         Предметы:
+                              - Предмет:
+                                    *Преподаватели -> Имена - Связь - 
 
-                     */
+                         */
 
 
-                    case "Предметы!":
-                        var inlineKeyboard_2 = new InlineKeyboardMarkup(new[]
-                        {
+                        case "Предметы!":
+                            var inlineKeyboard_2 = new InlineKeyboardMarkup(new[]
+                            {
                             new[]
                             {
                                 InlineKeyboardButton.WithCallbackData("1!"),
@@ -215,61 +281,66 @@ namespace Tg_Bot
                                 InlineKeyboardButton.WithCallbackData("6!")
                             }
                         });
-                        await client.SendTextMessageAsync(msg.From.Id, "Выберите предмет:", replyMarkup: inlineKeyboard_2);
-                        break;
+                            await client.SendTextMessageAsync(msg.From.Id, "Выберите предмет:", replyMarkup: inlineKeyboard_2);
+                            break;
 
-                    /*
+                        /*
 
-                    Ссылка на чат - "Вопрос-ответ" 
+                        Ссылка на чат - "Вопрос-ответ" 
 
-                     */
+                         */
 
-                    case "Вопрос-Ответ!":
-                        var inlineKeyboard_3 = new InlineKeyboardMarkup(new[]
-                        {
+                        case "Вопрос-Ответ!":
+                            var inlineKeyboard_3 = new InlineKeyboardMarkup(new[]
+                            {
                             new[]
                             {
                                 InlineKeyboardButton.WithUrl("Чат для вопросов!", "https://t.me/joinchat/V69YheCJ-Fb9q8mJ")
                             }
                         });
 
-                        await client.SendTextMessageAsync(msg.From.Id, "Держи!", replyMarkup: inlineKeyboard_3);
-                        break;
+                            await client.SendTextMessageAsync(msg.From.Id, "Держи!", replyMarkup: inlineKeyboard_3);
+                            break;
 
 
-                    /*
-                    х6
-                     Предметы:
-                          - Предмет:
-                                *вид урока и ссылка в кнопке
+                        /*
+                        х6
+                         Предметы:
+                              - Предмет:
+                                    *вид урока и ссылка в кнопке
 
-                     */
+                         */
 
-                    case "Конференции!":
-
-
-
-                        break;
+                        case "Конференции!":
 
 
-                    /*
 
-                    Мой контакт 
+                            break;
 
-                     */
 
-                    case "Связь!":
+                        /*
 
-                        string username;
-                        using (FileStream fstream = new FileStream("username.txt", FileMode.Open))
-                        {
-                            using (StreamReader reader = new StreamReader(fstream))
-                                username = reader.ReadLine();
-                        }
+                        Мой контакт 
 
-                        await client.SendTextMessageAsync(msg.Chat.Id, username);
-                        break;
+                         */
+
+                        case "Связь!":
+
+                            string username;
+                            using (FileStream fstream = new FileStream("username.txt", FileMode.Open))
+                            {
+                                using (StreamReader reader = new StreamReader(fstream))
+                                    username = reader.ReadLine();
+                            }
+
+                            await client.SendTextMessageAsync(msg.Chat.Id, username);
+                            break;
+                    }
                 }
+                else
+                    Console.WriteLine($"[{e.Message.From.FirstName}] - [{e.Message.From.Id}] - [{e.Message.From.Username}] | BAN!");
+
+            EndOfListenOfMsg:;
             }
         }
 
