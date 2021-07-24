@@ -12,13 +12,13 @@ namespace Tg_Bot
 {
     class KNT_HelperBot
     {
-        private string Token { get; set; }
-        private TelegramBotClient client;
-        private InlineKeyboardMarkup inlineKeyboard_TimeTable;
-        byte type = 0, day = 1, id = 2;
+        private string Token { get; set; }  //храниться токен
+        private TelegramBotClient client;   //обьект клиент-бот
+        private InlineKeyboardMarkup inlineKeyboard_TimeTable; //переменная в которой храняться кнопки с расписанием
+        byte type = 0, day = 1, id = 2; //индексы для инлайн кнопок(далее будет понятно зачем)
 
-        public delegate void PauseForWork();
-        public event PauseForWork PauseForWorking;
+        public delegate void PauseForWork();        //делегат для события поуза
+        public event PauseForWork PauseForWorking;  //событие пауза
 
         private bool firstCheck;
         public bool FirstCheck
@@ -189,14 +189,6 @@ namespace Tg_Bot
                 {
                     if (msg.Text == "/start")
                     {
-                        //if (FirstCheck)
-
-                        //Telegram_Client.NewCheckOfUser(client, e);
-                        //if (Telegram_Client.NewCheckOfUser_Result)
-                        //{
-                        //    Console.WriteLine($"[{e.Message.From.FirstName}] - [{e.Message.From.Id}] - [{e.Message.From.Username}] | BAN!");
-                        //    goto EndOfListenOfMsg;
-                        //}
                         if (!Telegram_Client.CheckingClient_IsFamiliar(msg.From.Id.ToString()))
                         {
                             await client.SendTextMessageAsync(msg.Chat.Id, $"Слушай, {msg.From.FirstName}🤨 ты не отсюдого, тебе низя 😋");

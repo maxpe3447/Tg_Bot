@@ -18,10 +18,6 @@ namespace Tg_Bot
             private set { NewCheckOfUser_Result = value; }
         }
 
-        //public static Telegram_Client(/*string client*/)
-        //{
-        //    //cl_for_check = client;
-        //}
         public static bool CheckingClient_IsFamiliar(string client)
         {
 
