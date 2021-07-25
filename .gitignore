@@ -3,8 +3,16 @@
 
 # Ada Library Information
 *.ali
+*.suo
+*.txt
+*.dll
+*.pdb
+*.cache
+
+project.assets.json
+Tg_Bot.csproj.nuget.g.props
+Tg_Bot.csproj.nuget.g.targets
+
 /bin
 /obj
 /.vs
-*.suo
-*.txt
