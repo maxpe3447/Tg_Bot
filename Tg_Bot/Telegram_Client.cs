@@ -27,7 +27,7 @@ namespace Tg_Bot
 
             for (int i = 0; i < my_clients.Length; i++)
             {
-                if (client == my_clients[i])
+                if (client == my_clients[i].Trim('\r'))
                 {
                     return true;
                 }
