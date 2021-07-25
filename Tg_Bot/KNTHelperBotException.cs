@@ -18,9 +18,6 @@ namespace Tg_Bot
             this.whatToDo = whatToDo;
         }
 
-        public string GetWhatToDo()
-        {
-            return whatToDo;
-        }
+        public string GetWhatToDo() => whatToDo;
     }
 }

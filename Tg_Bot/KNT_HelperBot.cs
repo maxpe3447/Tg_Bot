@@ -84,94 +84,9 @@ namespace Tg_Bot
             client.StopReceiving();
 
         }
-        [Obsolete]
-        private void CallBackInlineQuaryMain(object sender, CallbackQueryEventArgs callBack)
-        {
-           
-            Console.WriteLine($"[{callBack.CallbackQuery.From.FirstName}] - [{callBack.CallbackQuery.From.Id}] - [{callBack.CallbackQuery.From.Username}] | " 
-                + callBack.CallbackQuery.Data + '\t' + callBack.CallbackQuery.InlineMessageId);
 
-            string stype = callBack.CallbackQuery.Data.Split('|')[type];
-            
-            if ( stype != "Call" && callBack.CallbackQuery.Data.Split('|')[day] == "")
-                TypeOfWeek(callBack);
-            else if(stype == "Call")
-                GetCallBordImage(callBack);
-
-        }
-        private async void GetCallBordImage(CallbackQueryEventArgs callBack)
-        {
-            await client.AnswerCallbackQueryAsync(callBack.CallbackQuery.Id);
-            await client.SendPhotoAsync(callBack.CallbackQuery.Data.Split('|')[id], "https://github.com/maxpe3447/Tg_Bot/blob/develop/Tg_Bot/bin/Debug/net5.0/CallBoard.jpg?raw=true");
-        }
-        private async void TypeOfWeek(CallbackQueryEventArgs callBack)
-        {
-            await client.AnswerCallbackQueryAsync(callBack.CallbackQuery.Id, $"ля, кого я вижу, да, {callBack.CallbackQuery.From.FirstName} 🤨");
-
-            string[] date = callBack.CallbackQuery.Data.Split('|');
-
-            byte type = 0, id = 2;
-
-            var inlineKeyboard_DayOfWeek = GetinlineKeyboard_DayOfWeek(date);
-
-            await client.SendTextMessageAsync(date[id], "Выбери день недели:", replyMarkup: inlineKeyboard_DayOfWeek);
-        }
-        InlineKeyboardMarkup GetinlineKeyboard_DayOfWeek(string[] date)
-        {
-            byte type = 0, id = 2;
-            return new InlineKeyboardMarkup(new[]
-            {
-            new[]
-                {
-                    InlineKeyboardButton.WithCallbackData("Пн", $"{date[type]}|Monday|{date[id]}"), //for read from (for example NumeratorMonday.txt)
-                    InlineKeyboardButton.WithCallbackData("Вт", $"{date[type]}|Tuesday|{date[id]}")
-                },
-                new[]
-                {
-                    InlineKeyboardButton.WithCallbackData("Ср", $"{date[type]}|Wednesday|{date[id]}"),
-                    InlineKeyboardButton.WithCallbackData("Чт", $"{date[type]}|Thursday|{date[id]}")
-                },
-                  new[]
-                {
-                    InlineKeyboardButton.WithCallbackData("Пт", $"{date[type]}|Friday|{date[id]}")
-                }
-            });
-        }
-        private async void CallBackInlineQuaryForDayOfWeek(object sender, CallbackQueryEventArgs callBack)
-        {
-
-            string[] date = callBack.CallbackQuery.Data.Split('|');
-            byte type = 0, day = 1, id = 2;
-
-            if (date[day] == "")
-                return;
-            await client.AnswerCallbackQueryAsync(callBack.CallbackQuery.Id);
-
-
-            
-            await client.SendTextMessageAsync(date[id], $"Ты выбрал {date[day]}, тип недели {date[type]}:\n");
-            switch (date[day])
-            {
-                case "Monday":
-                    await client.SendTextMessageAsync(date[id], "No info");
-                    break;
-                case "Tuesday":
-                    await client.SendTextMessageAsync(date[id], "No info");
-                    break;
-                case "Wednesday":
-                    await client.SendTextMessageAsync(date[id], "No info");
-                    break;
-                case "Thursday":
-                    await client.SendTextMessageAsync(date[id], "No info");
-                    break;
-                case "Friday":
-                    await client.SendTextMessageAsync(date[id], "No info");
-                    break;
-            }
-        }
         private async void StartMessege(object sender, MessageEventArgs e)
         {
-
             var msg = e.Message;
             if (msg != null)
             {
@@ -180,7 +95,7 @@ namespace Tg_Bot
                 {
                     userInBlackList = Telegram_Client.CheckInBlackList(msg.From.Id.ToString());
                 }
-                catch(KNTHelperBotException ex)
+                catch (KNTHelperBotException ex)
                 {
                     Console.WriteLine(ex.Message + "\n=======\n" + ex.GetWhatToDo());
                 }
@@ -189,7 +104,7 @@ namespace Tg_Bot
                 {
                     if (msg.Text == "/start")
                     {
-                        
+
                         if (!Telegram_Client.CheckingClient_IsFamiliar(msg.From.Id.ToString()))
                         {
                             await client.SendTextMessageAsync(msg.Chat.Id, $"Слушай, {msg.From.FirstName}🤨 ты не отсюдого, тебе низя 😋");
@@ -333,7 +248,89 @@ namespace Tg_Bot
                 else
                     Console.WriteLine($"[{e.Message.From.FirstName}] - [{e.Message.From.Id}] - [{e.Message.From.Username}] | BAN!");
 
-            EndOfListenOfMsg:;
+                EndOfListenOfMsg:;
+            }
+        }
+
+        [Obsolete]
+        private void CallBackInlineQuaryMain(object sender, CallbackQueryEventArgs callBack)
+        {
+           
+            Console.WriteLine($"[{callBack.CallbackQuery.From.FirstName}] - [{callBack.CallbackQuery.From.Id}] - [{callBack.CallbackQuery.From.Username}] | " 
+                + callBack.CallbackQuery.Data + '\t' + callBack.CallbackQuery.InlineMessageId);
+
+            string stype = callBack.CallbackQuery.Data.Split('|')[type];
+            
+            if ( stype != "Call" && callBack.CallbackQuery.Data.Split('|')[day] == "")
+                TypeOfWeek(callBack);
+            else if(stype == "Call")
+                GetCallBordImage(callBack);
+
+        }
+        private async void GetCallBordImage(CallbackQueryEventArgs callBack)
+        {
+            await client.AnswerCallbackQueryAsync(callBack.CallbackQuery.Id);
+            await client.SendPhotoAsync(callBack.CallbackQuery.Data.Split('|')[id], "https://github.com/maxpe3447/Tg_Bot/blob/develop/Tg_Bot/bin/Debug/net5.0/CallBoard.jpg?raw=true");
+        }
+        private async void TypeOfWeek(CallbackQueryEventArgs callBack)
+        {
+            await client.AnswerCallbackQueryAsync(callBack.CallbackQuery.Id, $"ля, кого я вижу, да, {callBack.CallbackQuery.From.FirstName} 🤨");
+
+            string[] date = callBack.CallbackQuery.Data.Split('|');
+
+            var inlineKeyboard_DayOfWeek = GetinlineKeyboard_DayOfWeek(date);
+
+            await client.SendTextMessageAsync(date[id], "Выбери день недели:", replyMarkup: inlineKeyboard_DayOfWeek);
+        }
+        InlineKeyboardMarkup GetinlineKeyboard_DayOfWeek(string[] date)
+        {
+            return new InlineKeyboardMarkup(new[]
+            {
+            new[]
+                {
+                    InlineKeyboardButton.WithCallbackData("Пн", $"{date[type]}|Monday|{date[id]}"), //for read from (for example NumeratorMonday.txt)
+                    InlineKeyboardButton.WithCallbackData("Вт", $"{date[type]}|Tuesday|{date[id]}")
+                },
+                new[]
+                {
+                    InlineKeyboardButton.WithCallbackData("Ср", $"{date[type]}|Wednesday|{date[id]}"),
+                    InlineKeyboardButton.WithCallbackData("Чт", $"{date[type]}|Thursday|{date[id]}")
+                },
+                  new[]
+                {
+                    InlineKeyboardButton.WithCallbackData("Пт", $"{date[type]}|Friday|{date[id]}")
+                }
+            });
+        }
+        private async void CallBackInlineQuaryForDayOfWeek(object sender, CallbackQueryEventArgs callBack)
+        {
+
+            string[] date = callBack.CallbackQuery.Data.Split('|');
+
+            if (date[day] == "")
+                return;
+            await client.AnswerCallbackQueryAsync(callBack.CallbackQuery.Id);
+
+
+            
+            await client.SendTextMessageAsync(date[id], $"Ты выбрал {date[day]}, тип недели {date[type]}:\n");
+            switch (date[day])
+            {
+                case "Monday":
+                    await client.SendTextMessageAsync(date[id], "No info");
+                    break;
+                case "Tuesday":
+                    await client.SendTextMessageAsync(date[id], "No info");
+                    break;
+                case "Wednesday":
+                    await client.SendTextMessageAsync(date[id], "No info");
+                    break;
+                case "Thursday":
+                    await client.SendTextMessageAsync(date[id], "No info");
+                    break;
+                case "Friday":
+                    await client.SendTextMessageAsync(date[id], "No info");
+                    break;
             }
         }
 
