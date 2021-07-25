@@ -18,28 +18,15 @@ namespace Tg_Bot
             private set { NewCheckOfUser_Result = value; }
         }
 
-        //public static Telegram_Client(/*string client*/)
-        //{
-        //    //cl_for_check = client;
-        //}
         public static bool CheckingClient_IsFamiliar(string client)
         {
-
-            string[] my_clients;
+            Regex regex = new Regex(client);
 
             using (FileStream fstream = new FileStream(fileClientId, FileMode.Open))
             {
                 using (StreamReader reader = new StreamReader(fstream))
 
-                    my_clients = reader.ReadToEnd().Split('\n');
-            }
-
-            for (int i = 0; i < my_clients.Length; i++)
-            {
-                if (client == my_clients[i])
-                {
-                    return true;
-                }
+                    return regex.IsMatch(reader.ReadToEnd());
             }
             using (FileStream fStream = new FileStream(fileBlackList, FileMode.Append))
             {
