@@ -10,7 +10,6 @@ namespace Tg_Bot
 {
     class Telegram_Client
     {
-
         public static string cl_for_check;
 
         Telegram_Client(string client)
@@ -30,7 +29,7 @@ namespace Tg_Bot
                     my_clients = reader.ReadToEnd().Split('\n');
             }
 
-            for (int i = 0; i <my_clients.Length; i++)
+            for (int i = 0; i < my_clients.Length; i++)
             {
                 if (cl_for_check == my_clients[i])
                 {
@@ -40,6 +39,5 @@ namespace Tg_Bot
 
             return false;
         }
-
     }
 }
