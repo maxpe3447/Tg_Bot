@@ -3,26 +3,22 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
+using System.Text.RegularExpressions;
 using System.IO;
 
 namespace Tg_Bot
 {
-    class Telegram_Client
+    static class  Telegram_Client
     {
-        public static string cl_for_check;
+        private static string fileBlackList { get; set; } = "Black_List.txt";//файл черного списка
+        private static string fileClientId { get; } = "client_id.txt"; //свои
 
-        Telegram_Client(string client)
-        {
-            cl_for_check = client;
-
-        }
-        public static bool Checking_Client()
+        public static bool CheckingClient_IsFamiliar(string client)//проверка пользователя свой - истинна, чужой - ложь
         {
 
             string[] my_clients;
 
-            using (FileStream fstream = new FileStream("token.txt", FileMode.Open))
+            using (FileStream fstream = new FileStream(fileClientId, FileMode.Open))
             {
                 using (StreamReader reader = new StreamReader(fstream))
 
@@ -31,13 +27,34 @@ namespace Tg_Bot
 
             for (int i = 0; i < my_clients.Length; i++)
             {
-                if (cl_for_check == my_clients[i])
+                if (client == my_clients[i])
                 {
                     return true;
                 }
             }
-
+            using (FileStream fStream = new FileStream(fileBlackList, FileMode.Append))//если его не оказалось в списке своих - пишем в чнрный список
+            {
+                StreamWriter writer = new StreamWriter(fStream);
+                writer.WriteLine(client);
+                writer.Dispose();
+            }
             return false;
+        }
+
+        public static bool CheckInBlackList(string id)//проверка в черном списке
+        {
+            if (!File.Exists(fileBlackList))
+                throw new KNTHelperBotException("File >Black_List.txt< is missing", "Add this File for standart working");
+
+            Regex regex = new Regex(id);
+            using (FileStream fStream = new FileStream(fileBlackList, FileMode.Open))
+            {
+                using (StreamReader reader = new StreamReader(fStream))
+                {
+                    return regex.IsMatch(reader.ReadToEnd());
+                }
+            }
+            
         }
     }
 }
