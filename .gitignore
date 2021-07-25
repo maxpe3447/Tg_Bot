@@ -17,3 +17,13 @@ Tg_Bot.csproj.nuget.g.targets
 /bin
 /obj
 /.vs
+Tg_Bot/bin/Debug/net5.0/Tg_Bot.deps.json
+Tg_Bot/bin/Debug/net5.0/Tg_Bot.exe
+Tg_Bot/bin/Debug/net5.0/Tg_Bot.runtimeconfig.dev.json
+Tg_Bot/bin/Debug/net5.0/Tg_Bot.runtimeconfig.json
+Tg_Bot/obj/Debug/net5.0/.NETCoreApp,Version=v5.0.AssemblyAttributes.cs
+Tg_Bot/obj/Debug/net5.0/apphost.exe
+Tg_Bot/obj/Debug/net5.0/Tg_Bot.AssemblyInfo.cs
+Tg_Bot/obj/Debug/net5.0/Tg_Bot.csproj.CopyComplete
+Tg_Bot/obj/Debug/net5.0/Tg_Bot.GeneratedMSBuildEditorConfig.editorconfig
+Tg_Bot/obj/Tg_Bot.csproj.nuget.dgspec.json
