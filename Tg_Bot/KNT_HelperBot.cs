@@ -260,12 +260,17 @@ namespace Tg_Bot
                 + callBack.CallbackQuery.Data + '\t' + callBack.CallbackQuery.InlineMessageId);
 
             string stype = callBack.CallbackQuery.Data.Split('|')[type];
-            
-            if ( stype != "Call" && callBack.CallbackQuery.Data.Split('|')[day] == "")
-                TypeOfWeek(callBack);
-            else if(stype == "Call")
-                GetCallBordImage(callBack);
-
+            if (callBack.CallbackQuery.Data.IndexOf('|') == -1)
+            {
+                Console.WriteLine("ERROR ERROR ERROR");
+            }
+            else
+            {
+                if (stype != "Call" && callBack.CallbackQuery.Data.Split('|')[day] == "")
+                    TypeOfWeek(callBack);
+                else if (stype == "Call")
+                    GetCallBordImage(callBack);
+            }
         }
         private async void GetCallBordImage(CallbackQueryEventArgs callBack)
         {
@@ -341,7 +346,8 @@ namespace Tg_Bot
                 Keyboard = new List<List<KeyboardButton>>
                 {
                     new List<KeyboardButton> { new KeyboardButton { Text = "Расписание!" } },
-                    new List<KeyboardButton> { new KeyboardButton { Text = "Предметы!" }, new KeyboardButton { Text = "Вопрос-Ответ!" }, new KeyboardButton { Text = "Конференции!" } },
+                    new List<KeyboardButton> { new KeyboardButton { Text = "Предметы!" }, new KeyboardButton { Text = "Конференции!" } },
+                    new List<KeyboardButton> { new KeyboardButton { Text = "Вопрос-Ответ!" } },
                     new List<KeyboardButton> { new KeyboardButton { Text = "Связь!" } }
                 }
             };
