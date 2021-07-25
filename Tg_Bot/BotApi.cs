@@ -25,6 +25,7 @@ namespace Tg_Bot
                 {
                     bot.StopReciving();
                 }
+
                 catch (KNTHelperBotException ex)
                 {
                     Console.WriteLine(ex.Message + "\n=======\n" + ex.GetWhatToDo());
