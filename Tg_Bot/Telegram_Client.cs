@@ -20,13 +20,22 @@ namespace Tg_Bot
 
         public static bool CheckingClient_IsFamiliar(string client)
         {
-            Regex regex = new Regex(client);
+
+            string[] my_clients;
 
             using (FileStream fstream = new FileStream(fileClientId, FileMode.Open))
             {
                 using (StreamReader reader = new StreamReader(fstream))
 
-                    return regex.IsMatch(reader.ReadToEnd());
+                    my_clients = reader.ReadToEnd().Split('\n');
+            }
+
+            for (int i = 0; i < my_clients.Length; i++)
+            {
+                if (client == my_clients[i])
+                {
+                    return true;
+                }
             }
             using (FileStream fStream = new FileStream(fileBlackList, FileMode.Append))
             {

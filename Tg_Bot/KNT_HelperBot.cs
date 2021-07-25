@@ -189,14 +189,7 @@ namespace Tg_Bot
                 {
                     if (msg.Text == "/start")
                     {
-                        //if (FirstCheck)
-
-                        //Telegram_Client.NewCheckOfUser(client, e);
-                        //if (Telegram_Client.NewCheckOfUser_Result)
-                        //{
-                        //    Console.WriteLine($"[{e.Message.From.FirstName}] - [{e.Message.From.Id}] - [{e.Message.From.Username}] | BAN!");
-                        //    goto EndOfListenOfMsg;
-                        //}
+                        
                         if (!Telegram_Client.CheckingClient_IsFamiliar(msg.From.Id.ToString()))
                         {
                             await client.SendTextMessageAsync(msg.Chat.Id, $"Слушай, {msg.From.FirstName}🤨 ты не отсюдого, тебе низя 😋");
