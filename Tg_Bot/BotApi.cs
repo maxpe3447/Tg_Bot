@@ -5,11 +5,35 @@ using System.IO;
 
 namespace Tg_Bot
 {
+    class Pause
+    {
+        static public void PauseIvent() { Console.ReadKey(); }
+    }
     class Program
     {
+        
         static void Main(string[] args)
         {
-            KNT_HelperBot bot = new KNT_HelperBot();
+            KNT_HelperBot bot = null;
+            try
+            {
+                bot = new KNT_HelperBot();
+                bot.StartReciving();
+                bot.TurnOn_OfEvent();
+                bot.PauseForWorking += Pause.PauseIvent;
+                try
+                {
+                    bot.StopReciving();
+                }
+                catch (KNTHelperBotException ex)
+                {
+                    Console.WriteLine(ex.Message + "\n=======\n" + ex.GetWhatToDo());
+                }
+            }catch(Exception ex)
+            {
+                bot?.StopReciving();
+                Console.WriteLine($"\n-=-=-=-=-=-=\n{ex.Message}\n-=-=-=-=-=-=\n");
+            }
         }
     }
 }
