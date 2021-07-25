@@ -14,9 +14,12 @@ Tg_Bot.csproj.nuget.g.props
 Tg_Bot.csproj.nuget.g.targets
 .dtbcache.v2
 
+#Uninteresting folders :)
 /bin
 /obj
 /.vs
+
+#Compilation files
 Tg_Bot/bin/Debug/net5.0/Tg_Bot.deps.json
 Tg_Bot/bin/Debug/net5.0/Tg_Bot.exe
 Tg_Bot/bin/Debug/net5.0/Tg_Bot.runtimeconfig.dev.json
