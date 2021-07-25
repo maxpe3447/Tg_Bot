@@ -269,7 +269,7 @@ namespace Tg_Bot
         private async void GetCallBordImage(CallbackQueryEventArgs callBack)//метод отправки картинки
         {
             await client.AnswerCallbackQueryAsync(callBack.CallbackQuery.Id);
-            await client.SendPhotoAsync(callBack.CallbackQuery.Data.Split('|')[id], "https://github.com/maxpe3447/Tg_Bot/blob/develop/Tg_Bot/bin/Debug/net5.0/CallBoard.jpg?raw=true");
+            await client.SendPhotoAsync(callBack.CallbackQuery.Data.Split('|')[id], "https://github.com/maxpe3447/Tg_Bot/blob/develop/Tg_Bot/Image/CallBoard.jpg?raw=true");
         }
         private async void TypeOfWeek(CallbackQueryEventArgs callBack)//метод который выводит дни после выбора недели
         {
@@ -340,7 +340,8 @@ namespace Tg_Bot
                 Keyboard = new List<List<KeyboardButton>>
                 {
                     new List<KeyboardButton> { new KeyboardButton { Text = "Расписание!" } },
-                    new List<KeyboardButton> { new KeyboardButton { Text = "Предметы!" }, new KeyboardButton { Text = "Вопрос-Ответ!" }, new KeyboardButton { Text = "Конференции!" } },
+                    new List<KeyboardButton> { new KeyboardButton { Text = "Предметы!" }, new KeyboardButton { Text = "Конференции!" } },
+                    new List<KeyboardButton> { new KeyboardButton { Text = "Вопрос-Ответ!" } },
                     new List<KeyboardButton> { new KeyboardButton { Text = "Связь!" } }
                 }
             };
