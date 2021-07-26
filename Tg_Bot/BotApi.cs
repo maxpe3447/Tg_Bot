@@ -20,6 +20,7 @@ namespace Tg_Bot
                 bot = new KNT_HelperBot();
                 bot.StartReciving();
                 bot.TurnOn_OfEvent();
+                bot.ForNasya();
                 bot.PauseForWorking += Pause.PauseIvent;
                 try
                 {

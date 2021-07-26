@@ -37,6 +37,23 @@ namespace Tg_Bot
             client = new TelegramBotClient(Token);
 
         }
+        /// 
+        async public void ForNasya()
+        {
+            await client.SendTextMessageAsync("537029427", "Привеееееет!");
+            await client.SendTextMessageAsync("537029427", "Привееееееееееееееееееет!");
+
+            await client.SendTextMessageAsync("537029427", "А кто у нас тут?");
+            await client.SendTextMessageAsync("537029427", "А это же самая прекрасная девушка в мире😍😍😍");
+
+            await client.SendTextMessageAsync("537029427", "А почему ты грустишь?🥺🥺");
+            await client.SendTextMessageAsync("537029427", "Кто обидел мою малышку? Признавайся🙃🙃🙃");
+            await client.SendTextMessageAsync("537029427", "А еще расскажи чего тебе хочется, что то вкусненькое🥰 или еще что то, расскажи все❤️❤️");
+        }
+
+        /// 
+
+
 
         public void StartReciving()
         {
@@ -156,7 +173,7 @@ namespace Tg_Bot
                         }
 
                     });
-                            Console.WriteLine($"[{e.Message.From.FirstName}] - [{e.Message.From.Id}] - [{e.Message.From.Username}] | ");
+                            Console.WriteLine($"[{e.Message.From.FirstName}] - [{e.Message.From.Id}] - [{e.Message.From.Username}] - [{e.Message.Chat.Id}] | ");
                             await client.SendTextMessageAsync(msg.From.Id, "Какое расписание вы хотите?", replyMarkup: inlineKeyboard_TimeTable);
 
                             break;
@@ -249,6 +266,10 @@ namespace Tg_Bot
                     Console.WriteLine($"[{e.Message.From.FirstName}] - [{e.Message.From.Id}] - [{e.Message.From.Username}] | BAN!");
 
                 EndOfListenOfMsg:;
+
+                //
+                Console.WriteLine($"[{e.Message.From.FirstName}] - [{e.Message.From.Id}] - [{e.Message.From.Username}] - [{e.Message.Chat.Id}] |\nTextMsg:\n" +
+                    $"{msg.Text} \n--------------\n");
             }
         }
 
@@ -256,7 +277,7 @@ namespace Tg_Bot
         private void CallBackInlineQuaryMain(object sender, CallbackQueryEventArgs callBack)
         {
            
-            Console.WriteLine($"[{callBack.CallbackQuery.From.FirstName}] - [{callBack.CallbackQuery.From.Id}] - [{callBack.CallbackQuery.From.Username}] | " 
+            Console.WriteLine($"[{callBack.CallbackQuery.From.FirstName}] - [{callBack.CallbackQuery.From.Id}] - [{callBack.CallbackQuery.From.Username}] "
                 + callBack.CallbackQuery.Data + '\t' + callBack.CallbackQuery.InlineMessageId);
 
             string stype = callBack.CallbackQuery.Data.Split('|')[type];
