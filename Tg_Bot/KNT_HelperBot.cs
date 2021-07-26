@@ -239,6 +239,7 @@ namespace Tg_Bot
                                     username = reader.ReadLine();
                             }
 
+                            //await client.SendContactAsync();
                             await client.SendTextMessageAsync(msg.Chat.Id, username);
                             break;
                     }
