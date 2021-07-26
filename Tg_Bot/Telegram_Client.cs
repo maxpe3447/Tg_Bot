@@ -13,7 +13,9 @@ namespace Tg_Bot
         private static string fileBlackList { get; set; } = "Black_List.txt";//файл черного списка
         private static string fileClientId { get; } = "client_id.txt"; //свои
 
+
         public static bool CheckingClient_IsFamiliar(string client)//проверка пользователя свой - истинна, чужой - ложь
+
         {
 
             string[] my_clients;
