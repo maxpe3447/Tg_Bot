@@ -77,6 +77,7 @@ namespace Tg_Bot
                     "}\n");
             }
 
+
             PauseForWorking?.Invoke();  //если пауза существует - запускаем
             client.StopReceiving();     //по завершению паузы останавливаем работу бота
 
@@ -84,7 +85,6 @@ namespace Tg_Bot
 
         private async void StartMessege(object sender, MessageEventArgs e)
         {
-
             var msg = e.Message;
             if (msg != null)
             {
@@ -103,7 +103,9 @@ namespace Tg_Bot
                 {
                     if (msg.Text == "/start")
                     {
+
                         if (!Telegram_Client.CheckingClient_IsFamiliar(msg.From.Id.ToString())) //если это не один из наших, то записываем в черный список и отправляем уведомление
+
                         {
                             await client.SendTextMessageAsync(msg.Chat.Id, $"Слушай, {msg.From.FirstName}🤨 ты не отсюдого, тебе низя 😋");
                             await client.SendTextMessageAsync(msg.Chat.Id, "😏");
@@ -304,6 +306,7 @@ namespace Tg_Bot
             await client.SendTextMessageAsync(date[id], "Выбери день недели:", replyMarkup: inlineKeyboard_DayOfWeek);//выводим кнопки и порсим выбрать день
         }
         InlineKeyboardMarkup GetinlineKeyboard_DayOfWeek(string[] date)//генерация кнопок дней недели
+
         {
             return new InlineKeyboardMarkup(new[]
             {
@@ -323,7 +326,9 @@ namespace Tg_Bot
             }
             });
         }
+
         private async void CallBackInlineQuaryForDayOfWeek(object sender, CallbackQueryEventArgs callBack)//обработка нажатия на день недели
+
         {
 
             string[] date = callBack.CallbackQuery.Data.Split('|');
