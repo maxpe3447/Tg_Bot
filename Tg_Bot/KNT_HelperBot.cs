@@ -51,7 +51,7 @@ namespace Tg_Bot
                 client.OnMessage += StartMessege;   //события на прием сообщений
                 client.OnCallbackQuery += CallBackInlineQuaryMain;  //собитие на нажатие первых(главных) встроенных кнопок
                 client.OnCallbackQuery += CallBackInlineQuaryForDayOfWeek;  //собитие на вывод информации по дням недели(инлайн кнопки)
-
+                client.OnCallbackQuery += CallBackInlineQuaryForSubjType;
             }
             catch (Exception ex)
             {
@@ -122,7 +122,6 @@ namespace Tg_Bot
                     {
 
                         /*
-
                          Расписание:
                               - Числитель:
                                     * Выбор дня недели:
@@ -133,27 +132,26 @@ namespace Tg_Bot
                                          - Пн - Вт - Ср - Чт - Пт
 
                               - Звонки      ->      Текст расписания звонков
-
                          */
 
                         case "Расписание!":
 
                             inlineKeyboard_TimeTable = new InlineKeyboardMarkup(new[]
                             {
-                        new[]
-                        {
-                            InlineKeyboardButton.WithCallbackData("Расписание по числителю!", callbackData: $"Numerator||{msg.From.Id}")
-                        },
-                        new[]
-                        {
-                            InlineKeyboardButton.WithCallbackData("Расписание по знаменателю!", callbackData: $"Denominator||{msg.From.Id}")
-                        },
-                        new[]
-                        {
-                            InlineKeyboardButton.WithCallbackData("Расписание звонков!", callbackData: $"Call||{msg.From.Id}")
-                        }
+                            new[]
+                            {
+                                InlineKeyboardButton.WithCallbackData("Расписание по числителю!", callbackData: $"Numerator||{msg.From.Id}")
+                            },
+                            new[]
+                            {
+                                InlineKeyboardButton.WithCallbackData("Расписание по знаменателю!", callbackData: $"Denominator||{msg.From.Id}")
+                            },
+                            new[]
+                            {
+                                InlineKeyboardButton.WithCallbackData("Расписание звонков!", callbackData: $"Call||{msg.From.Id}")
+                            }
 
-                    });
+                            });
                             Console.WriteLine($"[{e.Message.From.FirstName}] - [{e.Message.From.Id}] - [{e.Message.From.Username}] | ");
                             await client.SendTextMessageAsync(msg.From.Id, "Какое расписание вы хотите?", replyMarkup: inlineKeyboard_TimeTable);
 
@@ -173,20 +171,19 @@ namespace Tg_Bot
                             {
                             new[]
                             {
-                                InlineKeyboardButton.WithCallbackData("1!"),
-                                InlineKeyboardButton.WithCallbackData("2!")
+                                InlineKeyboardButton.WithCallbackData("АиСД!"),
+                                InlineKeyboardButton.WithCallbackData("ВМ!")
                             },
                             new[]
                             {
-                                InlineKeyboardButton.WithCallbackData("3!"),
-                                InlineKeyboardButton.WithCallbackData("4!")
+                                InlineKeyboardButton.WithCallbackData("Л-МВ!"),
+                                InlineKeyboardButton.WithCallbackData("ОПИ!")
                             },
                             new[]
                             {
-                                InlineKeyboardButton.WithCallbackData("5!"),
-                                InlineKeyboardButton.WithCallbackData("6!")
+                                InlineKeyboardButton.WithCallbackData("Теор Вер!")
                             }
-                        });
+                            });
                             await client.SendTextMessageAsync(msg.From.Id, "Выберите предмет:", replyMarkup: inlineKeyboard_2);
                             break;
 
@@ -203,7 +200,7 @@ namespace Tg_Bot
                             {
                                 InlineKeyboardButton.WithUrl("Чат для вопросов!", "https://t.me/joinchat/V69YheCJ-Fb9q8mJ")
                             }
-                        });
+                            });
 
                             await client.SendTextMessageAsync(msg.From.Id, "Держи!", replyMarkup: inlineKeyboard_3);
                             break;
@@ -219,7 +216,24 @@ namespace Tg_Bot
 
                         case "Конференции!":
 
-
+                            var inlineKeyboard_4 = new InlineKeyboardMarkup(new[]
+                            {
+                            new[]
+                            {
+                                InlineKeyboardButton.WithCallbackData("АиСД!", callbackData: $"AiSD||{msg.From.Id}"),
+                                InlineKeyboardButton.WithCallbackData("ВМ!", callbackData: $"VM||{msg.From.Id}")
+                            },
+                            new[]
+                            {
+                                InlineKeyboardButton.WithCallbackData("Л-МВ!", callbackData: $"LMV||{msg.From.Id}"),
+                                InlineKeyboardButton.WithCallbackData("ОПИ!", callbackData: $"OPI||{msg.From.Id}")
+                            },
+                            new[]
+                            {
+                                InlineKeyboardButton.WithCallbackData("Теор Вер!", callbackData: $"TeorVer||{msg.From.Id}")
+                            }
+                            });
+                            await client.SendTextMessageAsync(msg.From.Id, "Выберите предмет:", replyMarkup: inlineKeyboard_4);
 
                             break;
 
@@ -259,6 +273,8 @@ namespace Tg_Bot
         }
 
         [Obsolete]
+
+
         private void CallBackInlineQuaryMain(object sender, CallbackQueryEventArgs callBack)//обработка нажатия инлайн кнопки
         {
            
@@ -271,8 +287,6 @@ namespace Tg_Bot
                 TypeOfWeek(callBack);
             else if(stype == "Call")//если звонки 
                 GetCallBordImage(callBack);//отправляем картинку
-
-
         }
         private async void GetCallBordImage(CallbackQueryEventArgs callBack)//метод отправки картинки
         {
@@ -294,19 +308,19 @@ namespace Tg_Bot
             return new InlineKeyboardMarkup(new[]
             {
             new[]
-                {
-                    InlineKeyboardButton.WithCallbackData("Пн", $"{date[type]}|Monday|{date[id]}"), //for read from (for example NumeratorMonday.txt)
-                    InlineKeyboardButton.WithCallbackData("Вт", $"{date[type]}|Tuesday|{date[id]}")
-                },
-                new[]
-                {
-                    InlineKeyboardButton.WithCallbackData("Ср", $"{date[type]}|Wednesday|{date[id]}"),
-                    InlineKeyboardButton.WithCallbackData("Чт", $"{date[type]}|Thursday|{date[id]}")
-                },
-                  new[]
-                {
-                    InlineKeyboardButton.WithCallbackData("Пт", $"{date[type]}|Friday|{date[id]}")
-                }
+            {
+                InlineKeyboardButton.WithCallbackData("Пн", $"{date[type]}|Monday|{date[id]}"), //for read from (for example NumeratorMonday.txt)
+                InlineKeyboardButton.WithCallbackData("Вт", $"{date[type]}|Tuesday|{date[id]}")
+            },
+            new[]
+            {
+                InlineKeyboardButton.WithCallbackData("Ср", $"{date[type]}|Wednesday|{date[id]}"),
+                InlineKeyboardButton.WithCallbackData("Чт", $"{date[type]}|Thursday|{date[id]}")
+            },
+            new[]
+            {
+                InlineKeyboardButton.WithCallbackData("Пт", $"{date[type]}|Friday|{date[id]}")
+            }
             });
         }
         private async void CallBackInlineQuaryForDayOfWeek(object sender, CallbackQueryEventArgs callBack)//обработка нажатия на день недели
@@ -348,10 +362,121 @@ namespace Tg_Bot
                 Keyboard = new List<List<KeyboardButton>>
                 {
                     new List<KeyboardButton> { new KeyboardButton { Text = "Расписание!" } },
-                    new List<KeyboardButton> { new KeyboardButton { Text = "Предметы!" }, new KeyboardButton { Text = "Вопрос-Ответ!" }, new KeyboardButton { Text = "Конференции!" } },
+                    new List<KeyboardButton> { new KeyboardButton { Text = "Предметы!" }, new KeyboardButton { Text = "Конференции!" } },
+                    new List<KeyboardButton> { new KeyboardButton { Text = "Вопрос-Ответ!" } },
                     new List<KeyboardButton> { new KeyboardButton { Text = "Связь!" } }
                 }
             };
         }
+
+
+        private async void CallBackInlineQuaryForSubjType(object sender, CallbackQueryEventArgs callBack)
+        {
+
+            string subj = callBack.CallbackQuery.ToString();
+
+            switch(subj)
+            {
+                case "AiSD":
+
+                    var inlineKeyboard_AiSD = new InlineKeyboardMarkup(new[]
+                    {
+                    new[]
+                    {
+                        InlineKeyboardButton.WithUrl("Лекция!", "link_for_lection")
+                    },
+                    new[]
+                    {
+                        InlineKeyboardButton.WithUrl("Лб 1!", "https://t.me/joinchat/V69YheCJ-Fb9q8mJ"),
+                        InlineKeyboardButton.WithUrl("Лб 2!", "https://t.me/joinchat/V69YheCJ-Fb9q8mJ"),
+                    }
+                    });
+
+                    await client.SendTextMessageAsync(callBack.CallbackQuery.Id, "Держи!", replyMarkup: inlineKeyboard_AiSD);
+
+                    break;
+
+                case "VM":
+
+                    var inlineKeyboard_VM = new InlineKeyboardMarkup(new[]
+                    {
+                    new[]
+                    {
+                        InlineKeyboardButton.WithUrl("Лекция!", "link_for_lection")
+                    },
+                    new[]
+                    {
+                        InlineKeyboardButton.WithUrl("Лб 1!", "link_for_lb"),
+                        InlineKeyboardButton.WithUrl("Лб 2!", "link_for_lb"),
+                    }
+                    });
+
+                    await client.SendTextMessageAsync(callBack.CallbackQuery.Id, "Держи!", replyMarkup: inlineKeyboard_VM);
+
+                    break;
+
+                case "LMV":
+
+                    var inlineKeyboard_LMV = new InlineKeyboardMarkup(new[]
+                    {
+                    new[]
+                    {
+                        InlineKeyboardButton.WithUrl("Лекция!", "link_for_lection")
+                    },
+                    new[]
+                    {
+                        InlineKeyboardButton.WithUrl("Лб 1!", "link_for_lb"),
+                        InlineKeyboardButton.WithUrl("Лб 2!", "link_for_lb"),
+                    }
+                    });
+
+                    await client.SendTextMessageAsync(callBack.CallbackQuery.Id, "Держи!", replyMarkup: inlineKeyboard_LMV);
+
+                    break;
+
+                case "OPI":
+
+                    var inlineKeyboard_OPI = new InlineKeyboardMarkup(new[]
+                    {
+                    new[]
+                    {
+                        InlineKeyboardButton.WithUrl("Лекция!", "link_for_lection")
+                    },
+                    new[]
+                    {
+                        InlineKeyboardButton.WithUrl("Лб 1!", "link_for_lb"),
+                        InlineKeyboardButton.WithUrl("Лб 2!", "link_for_lb"),
+                    }
+                    });
+
+                    await client.SendTextMessageAsync(callBack.CallbackQuery.Id, "Держи!", replyMarkup: inlineKeyboard_OPI);
+
+                    break;
+
+                case "TeorVer":
+
+                    var inlineKeyboard_TeorVer = new InlineKeyboardMarkup(new[]
+                    {
+                    new[]
+                    {
+                        InlineKeyboardButton.WithUrl("Лекция!", "link_for_lection")
+                    },
+                    new[]
+                    {
+                        InlineKeyboardButton.WithUrl("Лб 1!", "link_for_lb"),
+                        InlineKeyboardButton.WithUrl("Лб 2!", "link_for_lb"),
+                    }
+                    });
+
+                    await client.SendTextMessageAsync(callBack.CallbackQuery.Id, "Держи!", replyMarkup: inlineKeyboard_TeorVer);
+
+                    break;
+
+            }
+
+            
+            
+        }
+
     }
 }
