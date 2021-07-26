@@ -392,8 +392,8 @@ namespace Tg_Bot
                     },
                     new[]
                     {
-                        InlineKeyboardButton.WithUrl("Лб 1!", "https://t.me/joinchat/V69YheCJ-Fb9q8mJ"),
-                        InlineKeyboardButton.WithUrl("Лб 2!", "https://t.me/joinchat/V69YheCJ-Fb9q8mJ"),
+                        InlineKeyboardButton.WithUrl("Лб 1!", "link_for_lb"),
+                        InlineKeyboardButton.WithUrl("Лб 2!", "link_for_lb"),
                     }
                     });
 
