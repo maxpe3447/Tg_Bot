@@ -5,25 +5,24 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Text.RegularExpressions;
 using System.IO;
+using Tg_Bot.ServiceClass;
 
 namespace Tg_Bot
 {
-    static class  Telegram_Client
+    static class  TelegramClientCheck
     {
-        private static string fileBlackList { get; set; } = "Black_List.txt";
-        private static string fileClientId { get; } = "client_id.txt";
         public static bool NewCheckOfUser_Result
         {
             get { return NewCheckOfUser_Result; }
             private set { NewCheckOfUser_Result = value; }
         }
 
-        public static bool CheckingClient_IsFamiliar(string client)
+        public static bool IsFamiliar(string client)
         {
 
             string[] my_clients;
 
-            using (FileStream fstream = new FileStream(fileClientId, FileMode.Open))
+            using (FileStream fstream = new FileStream(FileName.FriendClient, FileMode.Open))
             {
                 using (StreamReader reader = new StreamReader(fstream))
 
@@ -37,7 +36,7 @@ namespace Tg_Bot
                     return true;
                 }
             }
-            using (FileStream fStream = new FileStream(fileBlackList, FileMode.Append))
+            using (FileStream fStream = new FileStream(FileName.BlackList, FileMode.Append))
             {
                 StreamWriter writer = new StreamWriter(fStream);
                 writer.WriteLine(client);
@@ -46,13 +45,13 @@ namespace Tg_Bot
             return false;
         }
 
-        public static bool CheckInBlackList(string id)
+        public static bool InBlackList(string id)
         {
-            if (!File.Exists(fileBlackList))
+            if (!File.Exists(FileName.BlackList))
                 throw new KNTHelperBotException("File >Black_List.txt< is missing", "Add this File for standart working");
 
             Regex regex = new Regex(id);
-            using (FileStream fStream = new FileStream(fileBlackList, FileMode.Open))
+            using (FileStream fStream = new FileStream(FileName.BlackList, FileMode.Open))
             {
                 using (StreamReader reader = new StreamReader(fStream))
                 {
