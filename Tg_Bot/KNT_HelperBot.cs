@@ -7,50 +7,51 @@ using System.IO;
 using Telegram.Bot;
 using Telegram.Bot.Args;
 using Telegram.Bot.Types.ReplyMarkups;
+using Tg_Bot.ServiceClass;
+using Tg_Bot.Interfaces;
+using Tg_Bot.Enumerate;
 
 namespace Tg_Bot
 {
-    class KNT_HelperBot
+    class KNT_HelperBot : IManegeKNTBot
     {
-        private string Token { get; set; }  //храниться токен
-        private TelegramBotClient client;   //обьект клиент-бот
-        private InlineKeyboardMarkup inlineKeyboard_TimeTable; //переменная в которой храняться кнопки с расписанием
-        byte type = 0, day = 1, id = 2; //индексы для инлайн кнопок(далее будет понятно зачем)
+        private string Token { get; set; }
+        private TelegramBotClient client;
 
-        public delegate void PauseForWork();        //делегат для события поуза
-        public event PauseForWork PauseForWorking;  //событие пауза
+        public delegate void PauseForWork();
+        public event PauseForWork PauseForWorking;
 
-        public KNT_HelperBot()  //конструктор
+        public KNT_HelperBot()
         {
-            using (FileStream fstream = new FileStream("token.txt", FileMode.Open))    //считываем токен
+            using (FileStream fstream = new FileStream(FileName.Token, FileMode.Open))
             {
                 using (StreamReader reader = new StreamReader(fstream))
-                    Token = reader.ReadLine();  //ложим в перемнную
+                    Token = reader.ReadLine();
             }
-            client = new TelegramBotClient(Token);  //связываем бота с токеном
+            client = new TelegramBotClient(Token);
 
         }
 
-        public void StartReciving() //метод для начала прослушивания сигналов от пользователя
+        public void StartReciving()
         {
-            Console.WriteLine(client.GetMeAsync().Result);  //выводим на консоль сообщение о том, что бот заработал
-            try     //на всякий случай ловим исключение, что бы корректно окончить работу бота(остановить прослушку)
+            Console.WriteLine(client.GetMeAsync().Result);
+            try
             {
-                client.StartReceiving();    //начало прослушки
+                client.StartReceiving();
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);  //выводим исключение 
-                client.StopReceiving();         //останавливаем прослушку
+                Console.WriteLine(ex.Message);
+                client.StopReceiving();
             }
         }
-        public void TurnOn_OfEvent()            //что бы бот отвечал на нажатия кнопок нужно прописать события, все события собраны в этом методе
+        public void TurnOn_OfEvent()
         {
-            try //ловим исключение по той же причине
+            try
             {
-                client.OnMessage += StartMessege;   //события на прием сообщений
-                client.OnCallbackQuery += CallBackInlineQuaryMain;  //собитие на нажатие первых(главных) встроенных кнопок
-                client.OnCallbackQuery += CallBackInlineQuaryForDayOfWeek;  //собитие на вывод информации по дням недели(инлайн кнопки)
+                client.OnMessage += StartMessege;
+                client.OnCallbackQuery += CallBackInlineQuaryMain;
+                //client.OnCallbackQuery += CallBackInlineQuaryForDayOfWeek;
 
             }
             catch (Exception ex)
@@ -59,16 +60,12 @@ namespace Tg_Bot
                 client.StopReceiving();
             }
         }
-
         public void StopReciving()
         {
-            if (PauseForWorking == null)    //проверяем наше событие, которое мы написали в этом классе на то включено оно или нет, если оно выключено
-            {                               //то завершаем работу бота, помнишь ты писала Console.ReadKey() тоесть пока не нажата кнопка - бот работает, так вот 
-                                            //к этому ивенту будет подключаться метод с паузой, сделано это для того, что б этот класс был более универсальный
-                                            //и при переходе на грфический интерфейс, мы легко смогли бы использовать этот класс без сильных изменений 
-                client.StopReceiving();     //останавливаем работу бота, если паузы нету
+            if (PauseForWorking == null)
+            {
+                client.StopReceiving();
 
-                //выбрасываем исключение нашего класса эксепшин с описанием того, что произошло и как это исправить
                 throw new KNTHelperBotException("------>\nThe object has no pause event\n<------\n", "add to Event of =>PauseForWorking<= function for pause:\n" +
                     "for Example:\n" +
                     "public void PauseIvent()\n" +
@@ -76,10 +73,8 @@ namespace Tg_Bot
                     "Console.ReadKey();\n" +
                     "}\n");
             }
-
-
-            PauseForWorking?.Invoke();  //если пауза существует - запускаем
-            client.StopReceiving();     //по завершению паузы останавливаем работу бота
+            PauseForWorking?.Invoke();
+            client.StopReceiving();
 
         }
 
@@ -88,36 +83,35 @@ namespace Tg_Bot
             var msg = e.Message;
             if (msg != null)
             {
-                bool userInBlackList = false;   //создам флажек, что б запомнить работу метода Telegram_Client.CheckInBlackList(msg.From.Id.ToString());
-                                                //это флажек отвечает за то в черном списке человек или нет
+                bool userInBlackList = false;
+
                 try
                 {
-                    userInBlackList = Telegram_Client.CheckInBlackList(msg.From.Id.ToString()); //проверяем и за одно ловим исключение 
+                    userInBlackList = TelegramClientCheck.InBlackList(msg.From.Id.ToString());
                 }
                 catch (KNTHelperBotException ex)
                 {
-                    Console.WriteLine(ex.Message + "\n=======\n" + ex.GetWhatToDo());   //если поймали выводим что это и как с этим бороться
+                    Console.WriteLine(ex.Message + "\n=======\n" + ex.GetWhatToDo());
                 }
 
-                if (!userInBlackList)   //если пользователь не в черном списке - ему доступны сообщения 
+                if (!userInBlackList)
                 {
                     if (msg.Text == "/start")
                     {
 
-                        if (!Telegram_Client.CheckingClient_IsFamiliar(msg.From.Id.ToString())) //если это не один из наших, то записываем в черный список и отправляем уведомление
-
+                        if (!TelegramClientCheck.IsFamiliar(msg.From.Id.ToString()))
                         {
                             await client.SendTextMessageAsync(msg.Chat.Id, $"Слушай, {msg.From.FirstName}🤨 ты не отсюдого, тебе низя 😋");
                             await client.SendTextMessageAsync(msg.Chat.Id, "😏");
 
                             Console.WriteLine($"[{e.Message.From.FirstName}] - [{e.Message.From.Id}] - [{e.Message.From.Username}] | BAN!");
-                            goto EndOfListenOfMsg; //перепрыгиваем  концу метода
+                            goto EndOfListenOfMsg;
                         }
-                        //дальше все по стандарту
+
                         await client.SendTextMessageAsync(msg.Chat.Id,
                                 "Добро пожаловать в данный чат-бот!🙃\n" +
                                 "Здесь есть почти вся необходимая информация что бы учиться на 2м курсе😌\n" +
-                                "Удачи в обучении!✨", replyMarkup: GetKeyBoardButtons());
+                                "Удачи в обучении!✨", replyMarkup: new ButtonGenerator().GetKeyBoardButtons());
                     }
 
                     switch (msg.Text)
@@ -140,24 +134,16 @@ namespace Tg_Bot
 
                         case "Расписание!":
 
-                            inlineKeyboard_TimeTable = new InlineKeyboardMarkup(new[]
-                            {
-                        new[]
-                        {
-                            InlineKeyboardButton.WithCallbackData("Расписание по числителю!", callbackData: $"Numerator||{msg.From.Id}")
-                        },
-                        new[]
-                        {
-                            InlineKeyboardButton.WithCallbackData("Расписание по знаменателю!", callbackData: $"Denominator||{msg.From.Id}")
-                        },
-                        new[]
-                        {
-                            InlineKeyboardButton.WithCallbackData("Расписание звонков!", callbackData: $"Call||{msg.From.Id}")
-                        }
+                            //              ||
+                            //TODO Replace-\||/ (Logger)
 
-                    });
-                            Console.WriteLine($"[{e.Message.From.FirstName}] - [{e.Message.From.Id}] - [{e.Message.From.Username}] | ");
-                            await client.SendTextMessageAsync(msg.From.Id, "Какое расписание вы хотите?", replyMarkup: inlineKeyboard_TimeTable);
+                            Console.WriteLine($"[{e.Message.From.FirstName}] - [{e.Message.From.Id}] - [{e.Message.From.Username}] - [{e.Message.Chat.Id}] | ");
+
+                            await client.SendTextMessageAsync(
+                                chatId: msg.From.Id,
+                                text: "Какое расписание вы хотите?",
+                                replyMarkup: new ButtonGenerator().GetInlineButtons_TimeTable()
+                                );
 
                             break;
 
@@ -171,25 +157,13 @@ namespace Tg_Bot
 
 
                         case "Предметы!":
-                            var inlineKeyboard_2 = new InlineKeyboardMarkup(new[]
-                            {
-                            new[]
-                            {
-                                InlineKeyboardButton.WithCallbackData("1!"),
-                                InlineKeyboardButton.WithCallbackData("2!")
-                            },
-                            new[]
-                            {
-                                InlineKeyboardButton.WithCallbackData("3!"),
-                                InlineKeyboardButton.WithCallbackData("4!")
-                            },
-                            new[]
-                            {
-                                InlineKeyboardButton.WithCallbackData("5!"),
-                                InlineKeyboardButton.WithCallbackData("6!")
-                            }
-                        });
-                            await client.SendTextMessageAsync(msg.From.Id, "Выберите предмет:", replyMarkup: inlineKeyboard_2);
+
+                            //TODO Logger
+
+                            await client.SendTextMessageAsync(
+                                chatId: msg.From.Id,
+                                text: "Выберите предмет:",
+                                replyMarkup: new ButtonGenerator().GetInlineButtons_Lessons());
                             break;
 
                         /*
@@ -199,15 +173,13 @@ namespace Tg_Bot
                          */
 
                         case "Вопрос-Ответ!":
-                            var inlineKeyboard_3 = new InlineKeyboardMarkup(new[]
-                            {
-                            new[]
-                            {
-                                InlineKeyboardButton.WithUrl("Чат для вопросов!", "https://t.me/joinchat/V69YheCJ-Fb9q8mJ")
-                            }
-                        });
 
-                            await client.SendTextMessageAsync(msg.From.Id, "Держи!", replyMarkup: inlineKeyboard_3);
+                            //TODO Logger
+
+                            await client.SendTextMessageAsync(
+                                chatId: msg.From.Id,
+                                text: "Держи!",
+                                replyMarkup: (InlineKeyboardMarkup)new ButtonGenerator().GetInlineButton_QuestionAnswe());
                             break;
 
 
@@ -221,7 +193,12 @@ namespace Tg_Bot
 
                         case "Конференции!":
 
+                            //TODO Logger
 
+                            await client.SendTextMessageAsync(
+                                chatId: msg.From.Id,
+                                text: "Выберите предмет:",
+                                replyMarkup: new ButtonGenerator().GetinlineKeyboard_Conf());
 
                             break;
 
@@ -234,22 +211,17 @@ namespace Tg_Bot
 
                         case "Связь!":
 
-                            string phone, name;
+                            using (FileStream fstream = new FileStream(FileName.ComunicationAnswer, FileMode.Open))
+                            using (StreamReader reader = new StreamReader(fstream))
+                                await client.SendTextMessageAsync(msg.Chat.Id, reader.ReadToEnd());
 
-                            using (FileStream fstream = new FileStream("phone.txt", FileMode.Open))
-                            {
-                                using (StreamReader reader = new StreamReader(fstream))
-                                    phone = reader.ReadToEnd();
-                            }
-                            using (FileStream fstream = new FileStream("name.txt", FileMode.Open))
-                            {
-                                using (StreamReader reader = new StreamReader(fstream))
-                                    name = reader.ReadToEnd();
-                            }
+                            break;
+                        default:
 
-                            await client.SendTextMessageAsync(msg.Chat.Id, "Вот ваша староста Анастасия😌\n" +
-                                "Её номерок: " + phone +
-                                "😉\nЕё ник: " + name + " 🙂");
+                            //              ||
+                            //TODO Replace-\||/
+                            Console.WriteLine($"[{e.Message.From.FirstName}] - [{e.Message.From.Id}] - [{e.Message.From.Username}] - [{e.Message.Chat.Id}] |\nTextMsg:\n" +
+                    $"{msg.Text} \n--------------\n");
                             break;
                     }
                 }
@@ -259,105 +231,71 @@ namespace Tg_Bot
                 EndOfListenOfMsg:;
             }
         }
-
         [Obsolete]
-        private void CallBackInlineQuaryMain(object sender, CallbackQueryEventArgs callBack)//обработка нажатия инлайн кнопки
+        private void CallBackInlineQuaryMain(object sender, CallbackQueryEventArgs callBack)
         {
-           
-            Console.WriteLine($"[{callBack.CallbackQuery.From.FirstName}] - [{callBack.CallbackQuery.From.Id}] - [{callBack.CallbackQuery.From.Username}] | " 
-                + callBack.CallbackQuery.Data + '\t' + callBack.CallbackQuery.InlineMessageId);//выводим оповищение о нажатии на консоль
+            InlineData inlineData = new InlineData(callBack.CallbackQuery.Data);
 
-            string stype = callBack.CallbackQuery.Data.Split('|')[type];//тип кнопки
+            //TODO Logger
+            Console.WriteLine($"[{callBack.CallbackQuery.From.FirstName}] - [{callBack.CallbackQuery.From.Id}] - [{callBack.CallbackQuery.From.Username}] "
+                + $"\t{callBack.CallbackQuery.InlineMessageId}\t|{inlineData.TypeOfButton}");
             
-            if ( stype != "Call" && callBack.CallbackQuery.Data.Split('|')[day] == "")//если тип числитель или наменатель, а день еще не задан - спрашиваем за дни
-                TypeOfWeek(callBack);
-            else if(stype == "Call")//если звонки 
-                GetCallBordImage(callBack);//отправляем картинку
-
-
-        }
-        private async void GetCallBordImage(CallbackQueryEventArgs callBack)//метод отправки картинки
-        {
-            await client.AnswerCallbackQueryAsync(callBack.CallbackQuery.Id);
-            await client.SendPhotoAsync(callBack.CallbackQuery.Data.Split('|')[id], "https://github.com/maxpe3447/Tg_Bot/blob/develop/Tg_Bot/bin/Debug/net5.0/CallBoard.jpg?raw=true");
-        }
-        private async void TypeOfWeek(CallbackQueryEventArgs callBack)//метод который выводит дни после выбора недели
-        {
-            await client.AnswerCallbackQueryAsync(callBack.CallbackQuery.Id, $"ля, кого я вижу, да, {callBack.CallbackQuery.From.FirstName} 🤨");
-
-            string[] date = callBack.CallbackQuery.Data.Split('|');//снова разбиваем на массив данных
-
-            var inlineKeyboard_DayOfWeek = GetinlineKeyboard_DayOfWeek(date); //генерируем кнопки дней недели
-
-            await client.SendTextMessageAsync(date[id], "Выбери день недели:", replyMarkup: inlineKeyboard_DayOfWeek);//выводим кнопки и порсим выбрать день
-        }
-        InlineKeyboardMarkup GetinlineKeyboard_DayOfWeek(string[] date)//генерация кнопок дней недели
-
-        {
-            return new InlineKeyboardMarkup(new[]
+            switch (inlineData.TypeOfButton)
             {
-            new[]
-                {
-                    InlineKeyboardButton.WithCallbackData("Пн", $"{date[type]}|Monday|{date[id]}"), //for read from (for example NumeratorMonday.txt)
-                    InlineKeyboardButton.WithCallbackData("Вт", $"{date[type]}|Tuesday|{date[id]}")
-                },
-                new[]
-                {
-                    InlineKeyboardButton.WithCallbackData("Ср", $"{date[type]}|Wednesday|{date[id]}"),
-                    InlineKeyboardButton.WithCallbackData("Чт", $"{date[type]}|Thursday|{date[id]}")
-                },
-                  new[]
-                {
-                    InlineKeyboardButton.WithCallbackData("Пт", $"{date[type]}|Friday|{date[id]}")
-                }
-            });
-        }
-
-        private async void CallBackInlineQuaryForDayOfWeek(object sender, CallbackQueryEventArgs callBack)//обработка нажатия на день недели
-
-        {
-
-            string[] date = callBack.CallbackQuery.Data.Split('|');
-
-            if (date[day] == "")
-                return;
-            await client.AnswerCallbackQueryAsync(callBack.CallbackQuery.Id);
-
-
-            
-            await client.SendTextMessageAsync(date[id], $"Ты выбрал {date[day]}, тип недели {date[type]}:\n");
-            switch (date[day])
-            {
-                case "Monday":
-                    await client.SendTextMessageAsync(date[id], "No info");
+                case TypeOfButton.None:
+                    throw new KNTHelperBotException("Unredefined call", "It is not clear who called the function");
                     break;
-                case "Tuesday":
-                    await client.SendTextMessageAsync(date[id], "No info");
+                case TypeOfButton.TimeTable:
+                    TimeTable(inlineData, callBack);
                     break;
-                case "Wednesday":
-                    await client.SendTextMessageAsync(date[id], "No info");
+                case TypeOfButton.DayOfWeek:
+                    DayOfWeek(inlineData, callBack);
                     break;
-                case "Thursday":
-                    await client.SendTextMessageAsync(date[id], "No info");
+                case TypeOfButton.Lessons:
                     break;
-                case "Friday":
-                    await client.SendTextMessageAsync(date[id], "No info");
+                case TypeOfButton.Conferences:
+                    break;
+                default:
                     break;
             }
         }
-
-        private IReplyMarkup GetKeyBoardButtons()
+        private async void TimeTable(InlineData data, CallbackQueryEventArgs callBack)
         {
-            return new ReplyKeyboardMarkup
+            await client.AnswerCallbackQueryAsync(callBack.CallbackQuery.Id, $"ля, кого я вижу, да, {callBack.CallbackQuery.From.FirstName} 🤨");
+
+            switch (data.TypeOfWeek)
             {
-                Keyboard = new List<List<KeyboardButton>>
-                {
-                    new List<KeyboardButton> { new KeyboardButton { Text = "Расписание!" } },
-                    new List<KeyboardButton> { new KeyboardButton { Text = "Предметы!" }, new KeyboardButton { Text = "Конференции!" } },
-                    new List<KeyboardButton> { new KeyboardButton { Text = "Вопрос-Ответ!" } },
-                    new List<KeyboardButton> { new KeyboardButton { Text = "Связь!" } }
-                }
-            };
+                case Enumerate.TypeOfWeek.None:
+                    throw new KNTHelperBotException("Unredefined call", $"It is not clear who called the function *Timetable*");
+                    
+                case Enumerate.TypeOfWeek.Numerator:
+                    await client.SendTextMessageAsync(
+                chatId: callBack.CallbackQuery.From.Id,
+                text: "Выбери день недели:",
+                replyMarkup: new ButtonGenerator().GetinlineKeyboard_DayOfWeek(data));
+                    break;
+                case Enumerate.TypeOfWeek.Denominator:
+                    await client.SendTextMessageAsync(
+                chatId: callBack.CallbackQuery.From.Id,
+                text: "Выбери день недели:",
+                replyMarkup: new ButtonGenerator().GetinlineKeyboard_DayOfWeek(data));
+                    break;
+                case Enumerate.TypeOfWeek.Call_:
+                    await client.AnswerCallbackQueryAsync(callBack.CallbackQuery.Id);
+                    await client.SendPhotoAsync(callBack.CallbackQuery.From.Id, "https://github.com/maxpe3447/Tg_Bot/blob/develop/Tg_Bot/Image/CallBoard.jpg?raw=true");
+                    break;
+                default:
+                    break;
+            }
+        }
+        private async void DayOfWeek(InlineData data, CallbackQueryEventArgs callBack)
+        {
+            await client.AnswerCallbackQueryAsync(callBack.CallbackQuery.Id);
+            await client.SendTextMessageAsync(callBack.CallbackQuery.From.Id, $"Ты выбрал {data.TypeOfDay}, тип недели {data.TypeOfWeek}:\n");
+
+            //TODO
+            //reading by file
+            await client.SendTextMessageAsync(callBack.CallbackQuery.From.Id, "Пока информации нету😅");
         }
     }
 }
