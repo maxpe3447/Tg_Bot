@@ -216,6 +216,9 @@ namespace Tg_Bot
                                 await client.SendTextMessageAsync(msg.Chat.Id, reader.ReadToEnd());
 
                             break;
+                        case "💰На Сервер!💰":
+                            client.SendTextMessageAsync(msg.Chat.Id, "https://send.monobank.ua/jar/2Toamtu3qm");
+                            break;
                         default:
 
                             //              ||

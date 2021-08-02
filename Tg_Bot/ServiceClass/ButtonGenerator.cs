@@ -16,7 +16,8 @@ namespace Tg_Bot.ServiceClass
                 {
                     new List<KeyboardButton> { new KeyboardButton { Text = "Расписание!" } },
                     new List<KeyboardButton> { new KeyboardButton { Text = "Предметы!" }, new KeyboardButton { Text = "Вопрос-Ответ!" }, new KeyboardButton { Text = "Конференции!" } },
-                    new List<KeyboardButton> { new KeyboardButton { Text = "Связь!" } }
+                    new List<KeyboardButton> { new KeyboardButton { Text = "Связь!" } },
+                    new List<KeyboardButton> { new KeyboardButton { Text = "💰На Сервер!💰" } }
                 }
             };
         }
