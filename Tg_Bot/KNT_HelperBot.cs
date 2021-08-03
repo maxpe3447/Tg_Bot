@@ -108,10 +108,9 @@ namespace Tg_Bot
                             goto EndOfListenOfMsg;
                         }
 
-                        await client.SendTextMessageAsync(msg.Chat.Id,
-                                "Добро пожаловать в данный чат-бот!🙃\n" +
-                                "Здесь есть почти вся необходимая информация что бы учиться на 2м курсе😌\n" +
-                                "Удачи в обучении!✨", replyMarkup: new ButtonGenerator().GetKeyBoardButtons());
+                        using (FileStream fstream = new FileStream(FileName.Welcome_text, FileMode.Open))
+                        using (StreamReader reader = new StreamReader(fstream))
+                            await client.SendTextMessageAsync(msg.Chat.Id, reader.ReadToEnd(), replyMarkup: new ButtonGenerator().GetKeyBoardButtons());
                     }
 
                     switch (msg.Text)
@@ -216,6 +215,11 @@ namespace Tg_Bot
                                 await client.SendTextMessageAsync(msg.Chat.Id, reader.ReadToEnd());
 
                             break;
+                        case "💰На Сервер!💰":
+                            await client.SendTextMessageAsync(msg.Chat.Id, FileName.DonateLink);
+                            await client.SendTextMessageAsync(msg.Chat.Id, "Или воспользуйтесь Qr-кодом для совершения доната, заранее спасибки🤗😌");
+                            await client.SendPhotoAsync (msg.Chat.Id, FileName.DonateQrCode);
+                            break;
                         default:
 
                             //              ||
@@ -282,7 +286,7 @@ namespace Tg_Bot
                     break;
                 case Enumerate.TypeOfWeek.Call_:
                     await client.AnswerCallbackQueryAsync(callBack.CallbackQuery.Id);
-                    await client.SendPhotoAsync(callBack.CallbackQuery.From.Id, "https://github.com/maxpe3447/Tg_Bot/blob/develop/Tg_Bot/Image/CallBoard.jpg?raw=true");
+                    await client.SendPhotoAsync(callBack.CallbackQuery.From.Id, FileName.TimeTable);
                     break;
                 default:
                     break;
