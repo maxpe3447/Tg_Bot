@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Telegram.Bot.Types.ReplyMarkups;
+using System.IO;
 
 namespace Tg_Bot.ServiceClass
 {
@@ -14,9 +15,10 @@ namespace Tg_Bot.ServiceClass
             {
                 Keyboard = new List<List<KeyboardButton>>
                 {
-                    new List<KeyboardButton> { new KeyboardButton { Text = "Расписание!" } },
-                    new List<KeyboardButton> { new KeyboardButton { Text = "Предметы!" }, new KeyboardButton { Text = "Вопрос-Ответ!" }, new KeyboardButton { Text = "Конференции!" } },
-                    new List<KeyboardButton> { new KeyboardButton { Text = "Связь!" } },
+                    new List<KeyboardButton> { new KeyboardButton { Text = "📋Расписание!📋" } },
+                    new List<KeyboardButton> { new KeyboardButton { Text = "📚Предметы!📚" },  new KeyboardButton { Text = "💻Конференции!💻" } },
+                    new List<KeyboardButton> { new KeyboardButton { Text = "⁉️Вопрос-Ответ!⁉️" } },
+                    new List<KeyboardButton> { new KeyboardButton { Text = "📲Связь!📲" } },
                     new List<KeyboardButton> { new KeyboardButton { Text = "💰На Сервер!💰" } }
                 }
             };
@@ -27,7 +29,9 @@ namespace Tg_Bot.ServiceClass
             InlineKeyboardButton button = new InlineKeyboardButton();
 
             button.Text = "Чат для вопросов!";
-            button.Url = "https://t.me/joinchat/V69YheCJ-Fb9q8mJ";
+            using (FileStream fstream = new FileStream(FileName.QuesAnsw, FileMode.Open))
+            using (StreamReader reader = new StreamReader(fstream)) 
+            button.Url = reader.ReadLine();
 
             return button;
         }
