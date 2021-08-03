@@ -217,7 +217,9 @@ namespace Tg_Bot
 
                             break;
                         case "💰На Сервер!💰":
-                            client.SendTextMessageAsync(msg.Chat.Id, "https://send.monobank.ua/jar/2Toamtu3qm");
+                            await client.SendTextMessageAsync(msg.Chat.Id, FileName.DonateLink);
+                            await client.SendTextMessageAsync(msg.Chat.Id, "Или воспользуйтесь Qr-кодом для совершения доната, заранее пасиба🙂");
+                            await client.SendPhotoAsync (msg.Chat.Id, FileName.DonateQrCode);
                             break;
                         default:
 
@@ -285,7 +287,7 @@ namespace Tg_Bot
                     break;
                 case Enumerate.TypeOfWeek.Call_:
                     await client.AnswerCallbackQueryAsync(callBack.CallbackQuery.Id);
-                    await client.SendPhotoAsync(callBack.CallbackQuery.From.Id, "https://github.com/maxpe3447/Tg_Bot/blob/develop/Tg_Bot/Image/CallBoard.jpg?raw=true");
+                    await client.SendPhotoAsync(callBack.CallbackQuery.From.Id, FileName.TimeTable);
                     break;
                 default:
                     break;
