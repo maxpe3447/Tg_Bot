@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
+using System.Threading;
 using System.IO;
 using Telegram.Bot;
 using Telegram.Bot.Args;
@@ -21,6 +21,8 @@ namespace Tg_Bot
         public delegate void PauseForWork();
         public event PauseForWork PauseForWorking;
 
+        Server.Server server;
+        Thread serv;
         public KNT_HelperBot()
         {
             using (FileStream fstream = new FileStream(FileName.Token, FileMode.Open))
@@ -30,8 +32,11 @@ namespace Tg_Bot
             }
             client = new TelegramBotClient(Token);
 
+            server = new Server.Server();
+
         }
 
+        [Obsolete]
         public void StartReciving()
         {
             Console.WriteLine(client.GetMeAsync().Result);
@@ -44,7 +49,11 @@ namespace Tg_Bot
                 Console.WriteLine(ex.Message);
                 client.StopReceiving();
             }
+            serv = new Thread(new ThreadStart(server.TurnOn));
+            serv.Start();
         }
+
+        [Obsolete]
         public void TurnOn_OfEvent()
         {
             try
@@ -131,7 +140,7 @@ namespace Tg_Bot
 
                          */
 
-                        case "Расписание!":
+                        case "📋Расписание!📋":
 
                             //              ||
                             //TODO Replace-\||/ (Logger)
@@ -155,7 +164,7 @@ namespace Tg_Bot
                          */
 
 
-                        case "Предметы!":
+                        case "📚Предметы!📚":
 
                             //TODO Logger
 
@@ -171,7 +180,7 @@ namespace Tg_Bot
 
                          */
 
-                        case "Вопрос-Ответ!":
+                        case "⁉️Вопрос-Ответ!⁉️":
 
                             //TODO Logger
 
@@ -190,7 +199,7 @@ namespace Tg_Bot
 
                          */
 
-                        case "Конференции!":
+                        case "💻Конференции!💻":
 
                             //TODO Logger
 
@@ -208,7 +217,7 @@ namespace Tg_Bot
 
                          */
 
-                        case "Связь!":
+                        case "📲Связь!📲":
 
                             using (FileStream fstream = new FileStream(FileName.ComunicationAnswer, FileMode.Open))
                             using (StreamReader reader = new StreamReader(fstream))
@@ -278,12 +287,14 @@ namespace Tg_Bot
                 text: "Выбери день недели:",
                 replyMarkup: new ButtonGenerator().GetinlineKeyboard_DayOfWeek(data));
                     break;
+
                 case Enumerate.TypeOfWeek.Denominator:
                     await client.SendTextMessageAsync(
                 chatId: callBack.CallbackQuery.From.Id,
                 text: "Выбери день недели:",
                 replyMarkup: new ButtonGenerator().GetinlineKeyboard_DayOfWeek(data));
                     break;
+
                 case Enumerate.TypeOfWeek.Call_:
                     await client.AnswerCallbackQueryAsync(callBack.CallbackQuery.Id);
                     await client.SendPhotoAsync(callBack.CallbackQuery.From.Id, FileName.TimeTable);
