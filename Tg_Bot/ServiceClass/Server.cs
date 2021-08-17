@@ -10,6 +10,7 @@ namespace Server
     {
         public string Ip { get; set; } = "192.168.1.10";
         public int Port { get; set; } = 8085;
+
         public string Result { get; private set; }
         public string ClientStatusOperation { get; private set; }
         private Socket listener;
@@ -124,11 +125,11 @@ namespace Server
             SendData(OkCode);
 
             string text = AnswerFromClient();
-            Console.WriteLine($"Server -> Text:\t{text}\n");
+            Console.WriteLine($"Server -> Text:\n{text}\n****\n");
 
-            File.Create(fileName);
+            //using (File.Create(fileName)) { }
 
-            using (FileStream fstream = new FileStream(dir + fileName, FileMode.Open))
+            using (FileStream fstream = new FileStream(dir + fileName, FileMode.Create, FileAccess.Write))
             using (StreamWriter writer = new StreamWriter(fstream))
                 await writer.WriteAsync(text);
         }
@@ -161,7 +162,7 @@ namespace Server
 
             string msg = AnswerFromClient();
 
-            Console.WriteLine($"Server -> dateTime: {date}\nmsg:\n{msg}");
+            Console.WriteLine($"Server -> dateTime: {date}\nmsg:\n{msg}\n****\n");
 
             Result = date + "|" + msg;
         }
