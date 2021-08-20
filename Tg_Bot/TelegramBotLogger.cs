@@ -10,7 +10,7 @@ namespace Tg_Bot
     {
 
         private static int count = 0;
-        public static void Print_info(string name, string id, string username, string msg = null, string date = null)
+        public static void PrintInfo(string name, string id, string username, string msg = null, string date = null)
         {          
             
             count++;
@@ -42,7 +42,7 @@ namespace Tg_Bot
             string user = "     User", id = "    ID", username = "      Username", msg = "     Operation", date = "     Date & Time";
             Console.WriteLine($"| {user, -15} | {id, -10} | {username, -20} | {msg, -20} | {date, -22} |");
         }
-        public static void Print_ban_info(string name, string id, string username, string msg = null, string date = null)
+        public static void PrintBanInfo(string name, string id, string username, string msg = null, string date = null)
         {
 
             if (msg != null)
