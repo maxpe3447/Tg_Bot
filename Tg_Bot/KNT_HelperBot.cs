@@ -113,7 +113,9 @@ namespace Tg_Bot
                             await client.SendTextMessageAsync(msg.Chat.Id, $"Слушай, {msg.From.FirstName}🤨 ты не отсюдого, тебе низя 😋");
                             await client.SendTextMessageAsync(msg.Chat.Id, "😏");
 
-                            Console.WriteLine($"[{e.Message.From.FirstName}] - [{e.Message.From.Id}] - [{e.Message.From.Username}] | BAN!");
+                            //Console.WriteLine($"[{e.Message.From.FirstName}] - [{e.Message.From.Id}] - [{e.Message.From.Username}] | BAN!");
+
+                            TelegramBotLogger.Print_ban_info(e.Message.From.FirstName, e.Message.From.Id.ToString(), e.Message.From.Username, msg.Text, DateTime.Now.ToString());
                             goto EndOfListenOfMsg;
                         }
 
@@ -145,7 +147,8 @@ namespace Tg_Bot
                             //              ||
                             //TODO Replace-\||/ (Logger)
 
-                            Console.WriteLine($"[{e.Message.From.FirstName}] - [{e.Message.From.Id}] - [{e.Message.From.Username}] - [{e.Message.Chat.Id}] | ");
+                            //Console.WriteLine($"[{e.Message.From.FirstName}] - [{e.Message.From.Id}] - [{e.Message.From.Username}] - [{e.Message.Chat.Id}] | ");
+                            TelegramBotLogger.Print_info(e.Message.From.FirstName, e.Message.From.Id.ToString(), e.Message.From.Username, TypeOfButton.TimeTable.ToString(), DateTime.Now.ToString());
 
                             await client.SendTextMessageAsync(
                                 chatId: msg.From.Id,
@@ -167,6 +170,7 @@ namespace Tg_Bot
                         case "📚Предметы!📚":
 
                             //TODO Logger
+                            TelegramBotLogger.Print_info(e.Message.From.FirstName, e.Message.From.Id.ToString(), e.Message.From.Username, TypeOfButton.Lessons.ToString(), DateTime.Now.ToString());
 
                             await client.SendTextMessageAsync(
                                 chatId: msg.From.Id,
@@ -183,6 +187,7 @@ namespace Tg_Bot
                         case "⁉️Вопрос-Ответ!⁉️":
 
                             //TODO Logger
+                            TelegramBotLogger.Print_info(e.Message.From.FirstName, e.Message.From.Id.ToString(), e.Message.From.Username, TypeOfButton.QuesAnsw.ToString(), DateTime.Now.ToString());
 
                             await client.SendTextMessageAsync(
                                 chatId: msg.From.Id,
@@ -202,6 +207,7 @@ namespace Tg_Bot
                         case "💻Конференции!💻":
 
                             //TODO Logger
+                            TelegramBotLogger.Print_info(e.Message.From.FirstName, e.Message.From.Id.ToString(), e.Message.From.Username, TypeOfButton.Conferences.ToString(), DateTime.Now.ToString());
 
                             await client.SendTextMessageAsync(
                                 chatId: msg.From.Id,
@@ -219,27 +225,38 @@ namespace Tg_Bot
 
                         case "📲Связь!📲":
 
+                            //TODO Logger
+                            TelegramBotLogger.Print_info(e.Message.From.FirstName, e.Message.From.Id.ToString(), e.Message.From.Username, TypeOfButton.Сommunication.ToString(), DateTime.Now.ToString());
+
                             using (FileStream fstream = new FileStream(FileName.ComunicationAnswer, FileMode.Open))
                             using (StreamReader reader = new StreamReader(fstream))
                                 await client.SendTextMessageAsync(msg.Chat.Id, reader.ReadToEnd());
 
                             break;
+
+
                         case "💰На Сервер!💰":
+
+                            //TODO Logger
+                            TelegramBotLogger.Print_info(e.Message.From.FirstName, e.Message.From.Id.ToString(), e.Message.From.Username, TypeOfButton.ToServer.ToString(), DateTime.Now.ToString());
+
                             await client.SendTextMessageAsync(msg.Chat.Id, FileName.DonateLink);
                             await client.SendTextMessageAsync(msg.Chat.Id, "Или воспользуйтесь Qr-кодом для совершения доната, заранее спасибки🤗😌");
-                            await client.SendPhotoAsync (msg.Chat.Id, FileName.DonateQrCode);
+                            await client.SendPhotoAsync(msg.Chat.Id, FileName.DonateQrCode);
                             break;
                         default:
 
                             //              ||
                             //TODO Replace-\||/
-                            Console.WriteLine($"[{e.Message.From.FirstName}] - [{e.Message.From.Id}] - [{e.Message.From.Username}] - [{e.Message.Chat.Id}] |\nTextMsg:\n" +
-                    $"{msg.Text} \n--------------\n");
+
+                            TelegramBotLogger.Print_info(e.Message.From.FirstName, e.Message.From.Id.ToString(), e.Message.From.Username, msg.Text, DateTime.Now.ToString());
+
                             break;
                     }
                 }
                 else
-                    Console.WriteLine($"[{e.Message.From.FirstName}] - [{e.Message.From.Id}] - [{e.Message.From.Username}] | BAN!");
+                    //Console.WriteLine($"[{e.Message.From.FirstName}] - [{e.Message.From.Id}] - [{e.Message.From.Username}] | BAN!");
+                    TelegramBotLogger.Print_ban_info(e.Message.From.FirstName, e.Message.From.Id.ToString(), e.Message.From.Username, msg.Text, DateTime.Now.ToString());
 
                 EndOfListenOfMsg:;
             }
@@ -250,14 +267,18 @@ namespace Tg_Bot
             InlineData inlineData = new InlineData(callBack.CallbackQuery.Data);
 
             //TODO Logger
-            Console.WriteLine($"[{callBack.CallbackQuery.From.FirstName}] - [{callBack.CallbackQuery.From.Id}] - [{callBack.CallbackQuery.From.Username}] "
-                + $"\t{callBack.CallbackQuery.InlineMessageId}\t|{inlineData.TypeOfButton}");
-            
+
+            //TelegramBotLogger.Print_info(callBack.CallbackQuery.From.FirstName, callBack.CallbackQuery.From.Id.ToString(),
+            //   callBack.CallbackQuery.From.Username, inlineData.TypeOfButton.ToString());
+
+            //Console.WriteLine($"[{callBack.CallbackQuery.From.FirstName}] - [{callBack.CallbackQuery.From.Id}] - [{callBack.CallbackQuery.From.Username}] "
+            //+ $"\t{callBack.CallbackQuery.InlineMessageId}\t|{inlineData.TypeOfButton}");
+
             switch (inlineData.TypeOfButton)
             {
                 case TypeOfButton.None:
                     throw new KNTHelperBotException("Unredefined call", "It is not clear who called the function");
-                    break;
+
                 case TypeOfButton.TimeTable:
                     TimeTable(inlineData, callBack);
                     break;
@@ -265,6 +286,7 @@ namespace Tg_Bot
                     DayOfWeek(inlineData, callBack);
                     break;
                 case TypeOfButton.Lessons:
+                    LessonsInfo(inlineData, callBack);
                     break;
                 case TypeOfButton.Conferences:
                     break;
@@ -274,13 +296,16 @@ namespace Tg_Bot
         }
         private async void TimeTable(InlineData data, CallbackQueryEventArgs callBack)
         {
-            await client.AnswerCallbackQueryAsync(callBack.CallbackQuery.Id, $"ля, кого я вижу, да, {callBack.CallbackQuery.From.FirstName} 🤨");
+            await client.AnswerCallbackQueryAsync(callBack.CallbackQuery.Id, $"ля, кого я вижу, {callBack.CallbackQuery.From.FirstName} 🤨");
+
+            TelegramBotLogger.Print_info(callBack.CallbackQuery.From.FirstName, callBack.CallbackQuery.From.Id.ToString(),
+               callBack.CallbackQuery.From.Username, data.TypeOfWeek.ToString(), DateTime.Now.ToString());
 
             switch (data.TypeOfWeek)
             {
                 case Enumerate.TypeOfWeek.None:
                     throw new KNTHelperBotException("Unredefined call", $"It is not clear who called the function *Timetable*");
-                    
+
                 case Enumerate.TypeOfWeek.Numerator:
                     await client.SendTextMessageAsync(
                 chatId: callBack.CallbackQuery.From.Id,
@@ -306,11 +331,59 @@ namespace Tg_Bot
         private async void DayOfWeek(InlineData data, CallbackQueryEventArgs callBack)
         {
             await client.AnswerCallbackQueryAsync(callBack.CallbackQuery.Id);
-            await client.SendTextMessageAsync(callBack.CallbackQuery.From.Id, $"Ты выбрал {data.TypeOfDay}, тип недели {data.TypeOfWeek}:\n");
+            //await client.SendTextMessageAsync(callBack.CallbackQuery.From.Id, $"Ты выбрал {data.TypeOfDay}, тип недели {data.TypeOfWeek}:\n");
 
-            //TODO
-            //reading by file
-            await client.SendTextMessageAsync(callBack.CallbackQuery.From.Id, "Пока информации нету😅");
+            TelegramBotLogger.Print_info(callBack.CallbackQuery.From.FirstName, callBack.CallbackQuery.From.Id.ToString(),
+               callBack.CallbackQuery.From.Username, $"{data.TypeOfWeek}-{data.TypeOfDay}", DateTime.Now.ToString());
+
+            string file = FileName.MainDir + $"{data.TypeOfWeek}_{data.TypeOfDay}.txt";
+
+            ReadOrCreateFiles(file, 153, callBack.CallbackQuery.From.Id.ToString());
         }
+
+        private async void LessonsInfo(InlineData data, CallbackQueryEventArgs callBack)
+        {
+
+            TelegramBotLogger.Print_info(callBack.CallbackQuery.From.FirstName, callBack.CallbackQuery.From.Id.ToString(),
+               callBack.CallbackQuery.From.Username, data.TypeOfLesson.ToString(), DateTime.Now.ToString());
+
+            string file = FileName.MainDir + $"{data.TypeOfLesson}-info.txt";
+
+            ReadOrCreateFiles(file, 151, callBack.CallbackQuery.From.Id.ToString());
+        }
+
+
+        private async void ReadOrCreateFiles(string fileName, long size, string id)
+        {
+
+            //string fileName = FileName.MainDir + $"{data.TypeOfWeek}_{data.TypeOfDay}.txt";
+
+            if (!File.Exists(fileName))
+            {
+                using (File.Create(fileName)) ;
+            }
+            if (File.Exists(fileName))
+            {
+                long size_;
+                using (FileStream fileStream = File.Open(fileName, FileMode.Open))
+                    size_ = fileStream.Length;
+
+                if (size_ == 0 || size_ == size)
+                {
+                    await client.SendTextMessageAsync(id, "Пока информации нету😅");
+                }
+                else
+                {
+                    using (FileStream fileStream = new FileStream(fileName, FileMode.Open))
+                    using (StreamReader reader = new StreamReader(fileStream))
+                        await client.SendTextMessageAsync(id, reader.ReadToEnd());
+
+
+                }
+            }
+            
+        }
+
     }
+
 }

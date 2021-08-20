@@ -8,6 +8,6 @@ namespace Tg_Bot.Enumerate
 {
     enum TypeOfLesson : byte
     {
-        None, Alg_DataStructur, HigherMath, HumanMachineInteraction, FundamentalsOfSoftEngineering, ProbabilityTheory, English, Sport
+        None, ASD, VM, LMV, OPI, TV, /*English, Sport*/
     }
 }
