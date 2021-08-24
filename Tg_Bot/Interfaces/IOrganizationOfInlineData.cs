@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Tg_Bot.Enumerate;
+﻿using Tg_Bot.Enumerate;
+
 namespace Tg_Bot.Interfaces
 {
     interface IOrganizationOfInlineData

@@ -16,7 +16,7 @@ namespace Tg_Bot.ServiceClass
                 Keyboard = new List<List<KeyboardButton>>
                 {
                     new List<KeyboardButton> { new KeyboardButton { Text = "📋Расписание!📋" } },
-                    new List<KeyboardButton> { new KeyboardButton { Text = "📚Предметы!📚" },  new KeyboardButton { Text = "💻Конференции!💻" } },
+                    new List<KeyboardButton> { new KeyboardButton { Text = "📚Предметы!📚" } /*, new KeyboardButton { Text = "💻Конференции!💻" }*/ },
                     new List<KeyboardButton> { new KeyboardButton { Text = "⁉️Вопрос-Ответ!⁉️" } },
                     new List<KeyboardButton> { new KeyboardButton { Text = "📲Связь!📲" } },
                     new List<KeyboardButton> { new KeyboardButton { Text = "💰На Сервер!💰" } }
@@ -88,7 +88,7 @@ namespace Tg_Bot.ServiceClass
                             TypeOfButton = Enumerate.TypeOfButton.Lessons,
                             TypeOfWeek = Enumerate.TypeOfWeek.None,
                             TypeOfDay = Enumerate.TypeOfDay.None,
-                            TypeOfLesson = Enumerate.TypeOfLesson.Alg_DataStructur
+                            TypeOfLesson = Enumerate.TypeOfLesson.ASD
                             }.Crypt()
                                     ),
                                 InlineKeyboardButton.WithCallbackData(
@@ -97,7 +97,7 @@ namespace Tg_Bot.ServiceClass
                             TypeOfButton = Enumerate.TypeOfButton.Lessons,
                             TypeOfWeek = Enumerate.TypeOfWeek.None,
                             TypeOfDay = Enumerate.TypeOfDay.None,
-                            TypeOfLesson = Enumerate.TypeOfLesson.HigherMath
+                            TypeOfLesson = Enumerate.TypeOfLesson.VM
                             }.Crypt())
                             },
                             new[]
@@ -108,7 +108,7 @@ namespace Tg_Bot.ServiceClass
                             TypeOfButton = Enumerate.TypeOfButton.Lessons,
                             TypeOfWeek = Enumerate.TypeOfWeek.None,
                             TypeOfDay = Enumerate.TypeOfDay.None,
-                            TypeOfLesson = Enumerate.TypeOfLesson.HumanMachineInteraction
+                            TypeOfLesson = Enumerate.TypeOfLesson.LMV
                             }.Crypt()),
                                 InlineKeyboardButton.WithCallbackData(
                                     text: "ОПИ",
@@ -116,7 +116,7 @@ namespace Tg_Bot.ServiceClass
                             TypeOfButton = Enumerate.TypeOfButton.Lessons,
                             TypeOfWeek = Enumerate.TypeOfWeek.None,
                             TypeOfDay = Enumerate.TypeOfDay.None,
-                            TypeOfLesson = Enumerate.TypeOfLesson.FundamentalsOfSoftEngineering
+                            TypeOfLesson = Enumerate.TypeOfLesson.OPI
                             }.Crypt())
                             },
                             new[]
@@ -127,7 +127,7 @@ namespace Tg_Bot.ServiceClass
                             TypeOfButton = Enumerate.TypeOfButton.Lessons,
                             TypeOfWeek = Enumerate.TypeOfWeek.None,
                             TypeOfDay = Enumerate.TypeOfDay.None,
-                            TypeOfLesson = Enumerate.TypeOfLesson.ProbabilityTheory
+                            TypeOfLesson = Enumerate.TypeOfLesson.TV
                                 }.Crypt())
                                 //InlineKeyboardButton.WithCallbackData("6!")
                             }
@@ -146,7 +146,7 @@ namespace Tg_Bot.ServiceClass
                             TypeOfButton = Enumerate.TypeOfButton.Conferences,
                             TypeOfWeek = Enumerate.TypeOfWeek.None,
                             TypeOfDay = Enumerate.TypeOfDay.None,
-                            TypeOfLesson = Enumerate.TypeOfLesson.Alg_DataStructur
+                            TypeOfLesson = Enumerate.TypeOfLesson.ASD
                                 }.Crypt()),
                                 InlineKeyboardButton.WithCallbackData(
                                     text: "ВМ!",
@@ -154,7 +154,7 @@ namespace Tg_Bot.ServiceClass
                             TypeOfButton = Enumerate.TypeOfButton.Conferences,
                             TypeOfWeek = Enumerate.TypeOfWeek.None,
                             TypeOfDay = Enumerate.TypeOfDay.None,
-                            TypeOfLesson = Enumerate.TypeOfLesson.HigherMath
+                            TypeOfLesson = Enumerate.TypeOfLesson.VM
                                 }.Crypt())
                             },
                             new[]
@@ -165,7 +165,7 @@ namespace Tg_Bot.ServiceClass
                             TypeOfButton = Enumerate.TypeOfButton.Conferences,
                             TypeOfWeek = Enumerate.TypeOfWeek.None,
                             TypeOfDay = Enumerate.TypeOfDay.None,
-                            TypeOfLesson = Enumerate.TypeOfLesson.HumanMachineInteraction
+                            TypeOfLesson = Enumerate.TypeOfLesson.LMV
                                 }.Crypt()),
                                 InlineKeyboardButton.WithCallbackData(
                                     text: "ОПИ!",
@@ -173,7 +173,7 @@ namespace Tg_Bot.ServiceClass
                             TypeOfButton = Enumerate.TypeOfButton.Conferences,
                             TypeOfWeek = Enumerate.TypeOfWeek.None,
                             TypeOfDay = Enumerate.TypeOfDay.None,
-                            TypeOfLesson = Enumerate.TypeOfLesson.FundamentalsOfSoftEngineering
+                            TypeOfLesson = Enumerate.TypeOfLesson.OPI
                                 }.Crypt())
                             },
                             new[]
@@ -184,7 +184,7 @@ namespace Tg_Bot.ServiceClass
                             TypeOfButton = Enumerate.TypeOfButton.Conferences,
                             TypeOfWeek = Enumerate.TypeOfWeek.None,
                             TypeOfDay = Enumerate.TypeOfDay.None,
-                            TypeOfLesson = Enumerate.TypeOfLesson.ProbabilityTheory
+                            TypeOfLesson = Enumerate.TypeOfLesson.TV
                                 }.Crypt())
                             }
                             });

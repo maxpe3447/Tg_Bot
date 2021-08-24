@@ -8,19 +8,16 @@ namespace Server
 {
     class Server
     {
-        public string Ip { get; set; } = "192.168.1.10";
+        //public string Ip { get; set; } = "192.168.1.10";
         public int Port { get; set; } = 8085;
 
         public string Result { get; private set; }
         public string ClientStatusOperation { get; private set; }
         private Socket listener;
-        private string dir = "ServiceFiles/";
+        private string mainDir = Tg_Bot.ServiceClass.FileName.MainDir;
         private string OkCode { get; set; } = "\0";
         private Socket tcpSocket;
-        public Server()
-        {
-            
-        }
+        public Server() {}
         public void TurnOn()
         {
             IPEndPoint tcpEndPoint = new IPEndPoint(IPAddress.Any, Port);
@@ -88,16 +85,29 @@ namespace Server
                 case CodeForServer.DeleteFile:
                     DeleteFile();
                     break;
+                case CodeForServer.GetFilesFromDir:
+                    GetFilesFromDir();
+                    break;
                 default:
                     break;
             }
         }
         private void GetFilesName()
         {
-            string[] files = Directory.GetFiles(dir);
+            string[] dir = Directory.GetDirectories(mainDir);
+            for(int i = 0; i < dir.Length; i++)
+                dir[i] = dir[i].Insert(dir[i].Length, "...");
+
+            string dirAnswer = string.Join('|', dir);
+            SendData(dirAnswer);
+
+            AnswerFromClient();
+
+            string[] files = Directory.GetFiles(mainDir);
             string answer = string.Join('|', files);
 
             SendData(answer);
+            Console.WriteLine($"Server -> GetFileName\n");
         }
         private void SendTextFromFile()
         {
@@ -107,7 +117,7 @@ namespace Server
             Console.WriteLine($"Server -> File name:\t{fileName}\n");
 
             string text;
-            using (FileStream stream = new FileStream(dir + fileName, FileMode.Open))
+            using (FileStream stream = new FileStream(mainDir + fileName, FileMode.Open))
             using (StreamReader reader = new StreamReader(stream))
                 text = reader.ReadToEnd();
 
@@ -129,7 +139,7 @@ namespace Server
 
             //using (File.Create(fileName)) { }
 
-            using (FileStream fstream = new FileStream(dir + fileName, FileMode.Create, FileAccess.Write))
+            using (FileStream fstream = new FileStream(mainDir + fileName, FileMode.Create, FileAccess.Write))
             using (StreamWriter writer = new StreamWriter(fstream))
                 await writer.WriteAsync(text);
         }
@@ -142,13 +152,13 @@ namespace Server
             string fileName = AnswerFromClient();
             Console.WriteLine($"Server -> File name for Create:\t{fileName}\n");
 
-            if (File.Exists(dir + fileName))
+            if (File.Exists(mainDir + fileName))
             {
                 SendData("Server -> File Exist!");
                 return;
             }
 
-            using (File.Create(dir + fileName))
+            using (File.Create(mainDir + fileName))
                 SendData(OkCode);
         }
 
@@ -176,7 +186,7 @@ namespace Server
 
             string newFileName = AnswerFromClient();
 
-            File.Move(dir+oldFileName, dir+newFileName);
+            File.Move(mainDir+oldFileName, mainDir+newFileName);
 
         }
         private void DeleteFile()
@@ -184,7 +194,31 @@ namespace Server
             SendData(OkCode);
             string fileName = AnswerFromClient();
 
-            File.Delete(dir+fileName);
+            File.Delete(mainDir+fileName);
+        }
+        private void GetFilesFromDir()
+        {
+            SendData(OkCode);
+
+            string getDir = AnswerFromClient();
+            string[] dir = Directory.GetDirectories(mainDir + getDir);
+            for (int i = 0; i < dir.Length; i++)
+                dir[i] = dir[i].Insert(dir[i].Length, "...");
+
+            string dirAnswer = string.Join('|', dir);
+
+            if (dirAnswer != string.Empty)
+                SendData(dirAnswer);
+            else
+                SendData(OkCode);
+
+                AnswerFromClient();
+
+            string[] files = Directory.GetFiles(mainDir + getDir);
+            string answer = string.Join('|', files);
+
+            SendData(answer);
+            Console.WriteLine($"Server -> GetFileName\n");
         }
         private void SendData(string data)
         {
@@ -200,6 +234,6 @@ namespace Server
 
     enum CodeForServer
     {
-        None, ForConnect, GetFiles, GetTextFromFile, SetTextFromFile, CreateNewFile, CreateEvent, EditFileName, DeleteFile
+        None, ForConnect, GetFiles, GetTextFromFile, SetTextFromFile, CreateNewFile, CreateEvent, EditFileName, DeleteFile, GetFilesFromDir
     }
 }

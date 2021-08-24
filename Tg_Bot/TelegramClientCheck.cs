@@ -17,31 +17,28 @@ namespace Tg_Bot
             private set { NewCheckOfUser_Result = value; }
         }
 
-        public static bool IsFamiliar(string client)
+        public static bool IsFamiliar(string id)
         {
-
-            string[] my_clients;
-
-            using (FileStream fstream = new FileStream(FileName.FriendClient, FileMode.Open))
+            Regex regex = new Regex(id);
+            using (FileStream fStream = new FileStream(FileName.FriendClient, FileMode.Open))
             {
-                using (StreamReader reader = new StreamReader(fstream))
-
-                    my_clients = reader.ReadToEnd().Split('\n');
-            }
-
-            for (int i = 0; i < my_clients.Length; i++)
-            {
-                if (client == my_clients[i].Trim('\r'))
+                using (StreamReader reader = new StreamReader(fStream))
                 {
-                    return true;
+                    
+                    if (regex.IsMatch(reader.ReadToEnd()))
+                    {
+                        return true;
+                    }
                 }
-            }
+            }           
+            
             using (FileStream fStream = new FileStream(FileName.BlackList, FileMode.Append))
             {
                 StreamWriter writer = new StreamWriter(fStream);
-                writer.WriteLine(client);
+                writer.WriteLine(id);
                 writer.Dispose();
             }
+
             return false;
         }
 
@@ -59,6 +56,18 @@ namespace Tg_Bot
                 }
             }
             
+        }
+
+        public static bool IsAdmins(string id)
+        {
+            Regex regex = new Regex(id);
+            using (FileStream fStream = new FileStream(FileName.Admin, FileMode.Open))
+            {
+                using (StreamReader reader = new StreamReader(fStream))
+                {
+                    return regex.IsMatch(reader.ReadToEnd());
+                }
+            }
         }
     }
 }
