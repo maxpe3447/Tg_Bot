@@ -23,8 +23,7 @@ namespace Tg_Bot
             using (FileStream fStream = new FileStream(FileName.FriendClient, FileMode.Open))
             {
                 using (StreamReader reader = new StreamReader(fStream))
-                {
-                    
+                { 
                     if (regex.IsMatch(reader.ReadToEnd()))
                     {
                         return true;
