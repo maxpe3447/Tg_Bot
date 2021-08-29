@@ -33,9 +33,9 @@ namespace Tg_Bot
         private static void Header_Print()
         {
             string user = "     User", id = "    ID", username = "      Username", msg = "     Operation", date = "     Date & Time";
-
-            Console.WriteLine($"| {user, -15} | {id, -10} | {username, -20} | {msg, -20} | {date, -22} |");
+            
             Console.WriteLine("_______________________________________________________________________________________________________");
+            Console.WriteLine($"| {user, -15} | {id, -10} | {username, -20} | {msg, -20} | {date, -22} |");
         }
         public static void PrintBanInfo(string name, string id, string username, string msg = null, string date = null)
         {

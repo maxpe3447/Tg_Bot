@@ -49,6 +49,8 @@ namespace Tg_Bot
             }
             server.TurnOnAsync();
 
+            var sMsg = new ScheduledMsg();
+            sMsg.SenderAllNewUsers(new DateTime(2021, 08, 31, 05, 30, 00), client, "Перезапустите бота))");
         }
 
         [Obsolete]
@@ -95,20 +97,19 @@ namespace Tg_Bot
 
                 try
                 {
-                    userInBlackList = TelegramClientCheck.InBlackList(msg.From.Id.ToString());
+                    userInBlackList = TelegramClientCheck.InBlackList(msg.From);
                 }
                 catch (KNTHelperBotException ex)
                 {
                     Console.WriteLine(ex.Message + "\n=======\n" + ex.GetWhatToDo());
                 }
 
-
+                TelegramClientCheck.AddToNewUsers(msg.From);
 
                 if (!userInBlackList)
                 {
-                    if (!TelegramClientCheck.IsAdmins(msg.From.Id.ToString()))
+                    if (!TelegramClientCheck.IsAdmins(msg.From))
                     {
-
                         DateTime release = new DateTime(2021, 08, 31, 05, 30, 00);
                         release = release.ToUniversalTime();
 
@@ -118,17 +119,17 @@ namespace Tg_Bot
 
                             TelegramBotLogger.PrintInfo(e.Message.From.FirstName, e.Message.From.Id.ToString(), e.Message.From.Username, msg.Text);
 
-                            await client.SendTextMessageAsync(msg.Chat.Id, $"До релиза бота осталось: {date.Days} дней {date.Hours} ч. {date.Minutes} м.");
+                            await client.SendTextMessageAsync(msg.Chat.Id, $"До релиза бота осталось: {date.Days} д. {date.Hours} ч. {date.Minutes} м.");
                             return;
                         }
                     }
 
                     if (msg.Text == "/start")
                     {
-                        if (!TelegramClientCheck.IsFamiliar(msg.From.Id.ToString()))
+                        if (!TelegramClientCheck.IsFriend(msg.From))
                         {
-                            await client.SendTextMessageAsync(msg.Chat.Id, $"Слушай, {msg.From.FirstName}🤨 ты не отсюдого, тебе низя 😋");
-                            await client.SendTextMessageAsync(msg.Chat.Id, "😏");
+                            await client.SendTextMessageAsync(msg.From.Id, $"Слушай, {msg.From.FirstName}🤨 ты не отсюдого, тебе низя 😋");
+                            await client.SendTextMessageAsync(msg.From.Id, "😏");
 
                             TelegramBotLogger.PrintBanInfo(e.Message.From.FirstName, e.Message.From.Id.ToString(), e.Message.From.Username, msg.Text);
                             goto EndOfListenOfMsg;
