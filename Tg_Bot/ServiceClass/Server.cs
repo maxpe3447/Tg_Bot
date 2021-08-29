@@ -3,6 +3,7 @@ using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Server
 {
@@ -18,27 +19,30 @@ namespace Server
         private string OkCode { get; set; } = "\0";
         private Socket tcpSocket;
         public Server() {}
-        public void TurnOn()
+        public async void  TurnOnAsync()
         {
             IPEndPoint tcpEndPoint = new IPEndPoint(IPAddress.Any, Port);
 
             tcpSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
             tcpSocket.Bind(tcpEndPoint);
             tcpSocket.Listen(4);
-            
-            while (true)
+            await Task.Run(()=>
             {
-                listener = tcpSocket.Accept();
+                while (true)
+                {
+                    listener = tcpSocket.Accept();
 
-                string data = AnswerFromClient();   // for code
-                Console.WriteLine($"Server -> {(CodeForServer)byte.Parse(data.ToString())}");
-                if (data != string.Empty)
-                    ChoicOfAction((CodeForServer)byte.Parse(data.ToString()));
+                    string data = AnswerFromClient();   // for code
+                    Console.WriteLine($"Server -> {(CodeForServer)byte.Parse(data.ToString())}");
+                    if (data != string.Empty)
+                        ChoicOfAction((CodeForServer)byte.Parse(data.ToString()));
 
-                listener.Shutdown(SocketShutdown.Both);
-                listener.Close();
+                    listener.Shutdown(SocketShutdown.Both);
+                    listener.Close();
 
-            }
+                }
+            });
+            
         }
         private string AnswerFromClient()
         {

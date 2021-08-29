@@ -4,13 +4,13 @@ namespace Tg_Bot.Interfaces
 {
     interface IOrganizationOfInlineData
     {
-        public TypeOfWeek TypeOfWeek { get; set; }
-        public TypeOfDay TypeOfDay { get; set; }
-        public TypeOfLesson TypeOfLesson { get; set; }
-        public TypeOfButton TypeOfButton { get; set; }
-        bool Compare(IOrganizationOfInlineData other);
+        TypeOfWeek Week { get; set; }
+        TypeOfDay Day { get; set; }
+        TypeOfLesson Lesson { get; set; }
+        TypeOfButton Button { get; set; }
+        string Additionally { get; set; }
         string Crypt();
-        IOrganizationOfInlineData Parse();
-        IOrganizationOfInlineData TryParse( bool onException);
+
+        void ParseIn(string jsonData);
     }
 }

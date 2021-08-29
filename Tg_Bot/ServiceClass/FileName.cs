@@ -14,9 +14,7 @@ namespace Tg_Bot.ServiceClass
         public static string LissonInfoDir { get; } = MainDir + @"LessonInfo/";
         
         public static string Token { get; } = MainDir + @"token.txt";
-        public static string FriendClient { get; } = MainDir + @"permitted_client_id.txt";
-        public static string Admin { get; } = MainDir + @"admin.txt";
-        public static string BlackList { get; } = MainDir + @"Black_List.txt";
+        public static string DBName { get; } = MainDir + @"db.db";
         public static string ComunicationAnswer { get; } = MainDir + @"Communication.txt";
         public static string Welcome_text { get; } = MainDir + @"Welcome.txt";
         public static string QuesAnsw { get; } = MainDir + @"QuesAnsw.txt";
