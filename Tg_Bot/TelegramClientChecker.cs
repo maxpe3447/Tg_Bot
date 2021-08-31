@@ -38,13 +38,14 @@ namespace Tg_Bot
                 {
                     isFriend = reader.HasRows;
                 }
+                if (!isFriend)
+                {
+                    command.CommandText =
+                        $"INSERT INTO BlackListUsers " +
+                        $"(Tg_id, Name, UserName) Values ('{user.Id}','{user.FirstName}','{user.Username}')";
 
-                command.CommandText = 
-                    $"INSERT INTO BlackListUsers " +
-                    $"(Tg_id, Name, UserName) Values ('{user.Id}','{user.FirstName}','{user.Username}')";
-               
                     command.ExecuteNonQuery();
-                
+                }
             }
 
             return isFriend;

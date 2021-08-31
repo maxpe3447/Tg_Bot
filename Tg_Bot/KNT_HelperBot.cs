@@ -50,7 +50,7 @@ namespace Tg_Bot
             server.TurnOnAsync();
 
             var sMsg = new ScheduledMsg();
-            sMsg.SenderAllNewUsers(new DateTime(2021, 08, 31, 05, 30, 00), client, "Перезапустите бота))");
+            sMsg.SenderAllNewUsers(new DateTime(2021, 08, 31, 06, 10, 00), client, "Извините за неудобства в алгоритме был баг, который сейчас устранен, пожалуйста перезапустите бота и пользуйтесь");
         }
 
         [Obsolete]
@@ -108,21 +108,20 @@ namespace Tg_Bot
 
                 if (!userInBlackList)
                 {
-                    if (!TelegramClientCheck.IsAdmins(msg.From))
-                    {
-                        DateTime release = new DateTime(2021, 08, 31, 05, 30, 00);
-                        release = release.ToUniversalTime();
+                    //if (!TelegramClientCheck.IsAdmins(msg.From)){
+                        //DateTime release = new DateTime(2021, 08, 31, 05, 30, 00);
+                        //release = release.ToUniversalTime();
 
-                        if (DateTime.Now.ToUniversalTime() < release)
-                        {
-                            TimeSpan date = release.Subtract(DateTime.Now.ToUniversalTime());
+                        //if (DateTime.Now.ToUniversalTime() < release)
+                        //{
+                        //    TimeSpan date = release.Subtract(DateTime.Now.ToUniversalTime());
 
-                            TelegramBotLogger.PrintInfo(e.Message.From.FirstName, e.Message.From.Id.ToString(), e.Message.From.Username, msg.Text);
+                        //    TelegramBotLogger.PrintInfo(e.Message.From.FirstName, e.Message.From.Id.ToString(), e.Message.From.Username, msg.Text);
 
-                            await client.SendTextMessageAsync(msg.Chat.Id, $"До релиза бота осталось: {date.Days} д. {date.Hours} ч. {date.Minutes} м.");
-                            return;
-                        }
-                    }
+                        //    await client.SendTextMessageAsync(msg.Chat.Id, $"До релиза бота осталось: {date.Days} д. {date.Hours} ч. {date.Minutes} м.");
+                        //    return;
+                        //}
+                    //}
 
                     if (msg.Text == "/start")
                     {
