@@ -49,8 +49,8 @@ namespace Tg_Bot
             }
             server.TurnOnAsync();
 
-            var sMsg = new ScheduledMsg();
-            sMsg.SenderAllNewUsers(new DateTime(2021, 08, 31, 06, 10, 00), client, "Извините за неудобства в алгоритме был баг, который сейчас устранен, пожалуйста перезапустите бота и пользуйтесь");
+            //var sMsg = new ScheduledMsg();
+            //sMsg.SenderAllNewUsers(new DateTime(2021, 08, 31, 06, 12, 00), client, "Извините за неудобства в алгоритме был баг, который сейчас устранен, пожалуйста перезапустите бота и пользуйтесь");
         }
 
         [Obsolete]
@@ -87,7 +87,7 @@ namespace Tg_Bot
 
         }
 
-        //[Obsolete]
+        [Obsolete]
         private async void StartMessege(object sender, MessageEventArgs e)
         {
             var msg = e.Message;
