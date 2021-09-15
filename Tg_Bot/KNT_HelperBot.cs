@@ -135,8 +135,7 @@ namespace Tg_Bot
                         }
 
                             await client.SendTextMessageAsync(msg.Chat.Id, File.ReadAllText(FileName.Welcome_text), replyMarkup: new ButtonGenerator().GetKeyBoardButtons());
-
-                        
+                                                
                     }
 
                     switch (msg.Text)

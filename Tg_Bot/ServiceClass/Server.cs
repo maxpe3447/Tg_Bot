@@ -4,6 +4,9 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
+using System.Collections.Generic;
+using System.Linq;
+using Microsoft.Data.Sqlite;
 
 namespace Server
 {
@@ -17,6 +20,7 @@ namespace Server
         private Socket listener;
         private string mainDir = Tg_Bot.ServiceClass.FileName.MainDir;
         private string OkCode { get; set; } = "\0";
+        private char separator { get; } = '|';
         private Socket tcpSocket;
         public Server() {}
         public async void  TurnOnAsync()
@@ -92,6 +96,9 @@ namespace Server
                 case CodeForServer.GetFilesFromDir:
                     GetFilesFromDir();
                     break;
+                case CodeForServer.GetTableNames:
+                    GetTablesFromDB();
+                    break;
                 default:
                     break;
             }
@@ -102,13 +109,13 @@ namespace Server
             for(int i = 0; i < dir.Length; i++)
                 dir[i] = dir[i].Insert(dir[i].Length, "...");
 
-            string dirAnswer = string.Join('|', dir);
+            string dirAnswer = string.Join(separator, dir);
             SendData(dirAnswer);
 
             AnswerFromClient();
 
             string[] files = Directory.GetFiles(mainDir);
-            string answer = string.Join('|', files);
+            string answer = string.Join(separator, files);
 
             SendData(answer);
             Console.WriteLine($"Server -> GetFileName\n");
@@ -121,7 +128,7 @@ namespace Server
             Console.WriteLine($"Server -> File name:\t{fileName}\n");
 
             string text;
-            using (FileStream stream = new FileStream(mainDir + fileName, FileMode.Open))
+            using (FileStream stream = new FileStream(mainDir + @fileName, FileMode.Open))
             using (StreamReader reader = new StreamReader(stream))
                 text = reader.ReadToEnd();
 
@@ -178,7 +185,7 @@ namespace Server
 
             Console.WriteLine($"Server -> dateTime: {date}\nmsg:\n{msg}\n****\n");
 
-            Result = date + "|" + msg;
+            Result = date + separator + msg;
         }
         private void EditFileName()
         {
@@ -209,7 +216,7 @@ namespace Server
             for (int i = 0; i < dir.Length; i++)
                 dir[i] = dir[i].Insert(dir[i].Length, "...");
 
-            string dirAnswer = string.Join('|', dir);
+            string dirAnswer = string.Join(separator, dir);
 
             if (dirAnswer != string.Empty)
                 SendData(dirAnswer);
@@ -219,10 +226,36 @@ namespace Server
                 AnswerFromClient();
 
             string[] files = Directory.GetFiles(mainDir + getDir);
-            string answer = string.Join('|', files);
+            string answer = string.Join(separator, files);
 
             SendData(answer);
             Console.WriteLine($"Server -> GetFileName\n");
+        }
+        private void GetTablesFromDB()
+        {
+            SendData(OkCode);
+
+            var result = new List<string>();
+            using (var connection = new SqliteConnection($"Data Source={Tg_Bot.ServiceClass.FileName.DBName}"))
+            {
+                connection.Open();
+                var commond = connection.CreateCommand();
+
+                commond.CommandText = "SELECT * FROM sqlite_sequence";
+
+                using(var reader = commond.ExecuteReader())
+                {
+                    if (reader.HasRows)
+                    {
+                        while (reader.Read())
+                        {
+                            result.Add(reader["name"].ToString());
+                        }
+                    }
+                }
+
+            }
+            SendData(string.Join(separator, result.ToArray()));
         }
         private void SendData(string data)
         {
@@ -238,6 +271,6 @@ namespace Server
 
     enum CodeForServer
     {
-        None, ForConnect, GetFiles, GetTextFromFile, SetTextFromFile, CreateNewFile, CreateEvent, EditFileName, DeleteFile, GetFilesFromDir
+        None, ForConnect, GetFiles, GetTextFromFile, SetTextFromFile, CreateNewFile, CreateEvent, EditFileName, DeleteFile, GetFilesFromDir, GetTableNames
     }
 }
