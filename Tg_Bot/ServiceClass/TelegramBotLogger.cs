@@ -27,16 +27,16 @@ namespace Tg_Bot
             if (msg != null)
             {
                 string date = DateTime.Now.Day + "/" + DateTime.Now.Month + "/" + DateTime.Now.Year + " " + (DateTime.Now.Hour + 3) + ":" + DateTime.Now.Minute + ":" + DateTime.Now.Second;
-                Console.WriteLine($"| {name,-20} | {id,-10} | {username,-30} | {msg,-30} | {date,-25} |");
+                Console.WriteLine($"| {name,-15} | {id,-10} | {username,-25} | {msg,-19} | {date,-25} |");
 
             }
         }
         private static void Header_Print()
         {
-            string user = "     User", id = "    ID", username = "      Username", msg = "     Operation", date = "     Date & Time";
+            string user = "  User", id = " ID", username = "   Username", msg = "  Operation", date = "  Date & Time";
 
-            Console.WriteLine("__________________________________________________________________________________________________________________________________");
-            Console.WriteLine($"| {user,-20} | {id,-10} | {username,-30} | {msg,-30} | {date,-25} |");
+            Console.WriteLine("______________________________________________________________________________________________________________");
+            Console.WriteLine($"| {user,-15} | {id,-10} | {username,-25} | {msg,-19} | {date,-25} |");
         }
         public static void PrintBanInfo(string name, string id, string username, string msg = null, string date = null)
         {

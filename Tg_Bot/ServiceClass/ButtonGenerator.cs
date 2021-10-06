@@ -16,7 +16,7 @@ namespace Tg_Bot.ServiceClass
                 Keyboard = new List<List<KeyboardButton>>
                 {
                     new List<KeyboardButton> { new KeyboardButton { Text = "📋Расписание!📋" } },
-                    new List<KeyboardButton> { new KeyboardButton { Text = "📚Предметы!📚" } /*, new KeyboardButton { Text = "💻Конференции!💻" }*/ },
+                    new List<KeyboardButton> { new KeyboardButton { Text = "📚Предметы!📚" } , new KeyboardButton { Text = "💻Конференции!💻" } },
                     new List<KeyboardButton> { new KeyboardButton { Text = "⁉️Вопрос-Ответ!⁉️" } },
                     new List<KeyboardButton> { new KeyboardButton { Text = "📲Связь!📲" } },
                     new List<KeyboardButton> { new KeyboardButton { Text = "💰На Сервер!💰" } }
@@ -128,8 +128,15 @@ namespace Tg_Bot.ServiceClass
                             Week = Enumerate.TypeOfWeek.None,
                             Day = Enumerate.TypeOfDay.None,
                             Lesson = Enumerate.TypeOfLesson.TV
+                                }.Crypt()),                            
+                                InlineKeyboardButton.WithCallbackData(
+                                    text: "ІУК",
+                                    callbackData: new InlineData(){
+                            Button = Enumerate.TypeOfButton.Lessons,
+                            Week = Enumerate.TypeOfWeek.None,
+                            Day = Enumerate.TypeOfDay.None,
+                            Lesson = Enumerate.TypeOfLesson.IUK
                                 }.Crypt())
-                                //InlineKeyboardButton.WithCallbackData("6!")
                             }
                         });
         }
@@ -185,6 +192,14 @@ namespace Tg_Bot.ServiceClass
                             Week = Enumerate.TypeOfWeek.None,
                             Day = Enumerate.TypeOfDay.None,
                             Lesson = Enumerate.TypeOfLesson.TV
+                                }.Crypt()),
+                                InlineKeyboardButton.WithCallbackData(
+                                    text: "ІУК",
+                                    callbackData: new InlineData(){
+                            Button = Enumerate.TypeOfButton.Conferences,
+                            Week = Enumerate.TypeOfWeek.None,
+                            Day = Enumerate.TypeOfDay.None,
+                            Lesson = Enumerate.TypeOfLesson.IUK
                                 }.Crypt())
                             }
                             });

@@ -12,7 +12,8 @@ namespace Tg_Bot.ServiceClass
         public static string NumeratorDir { get; } = MainDir + @"Numerator/";
         public static string DenominatorDir { get; } = MainDir + @"Denominator/";
         public static string LissonInfoDir { get; } = MainDir + @"LessonInfo/";
-        
+        public static string ConferencDir { get; } = MainDir + @"Conferenc/";
+
         public static string Token { get; } = MainDir + @"token.txt";
         public static string DBName { get; } = MainDir + @"db.db";
         public static string ComunicationAnswer { get; } = MainDir + @"Communication.txt";
