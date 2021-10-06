@@ -2,6 +2,6 @@
 {
     enum TypeOfDay : byte
     {
-        None, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday
+        None, Mo, Tu, We, Th, Fr, Sa, Su
     }
 }

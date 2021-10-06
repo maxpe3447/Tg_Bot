@@ -216,7 +216,7 @@ namespace Tg_Bot.ServiceClass
                         callbackData: new InlineData(){
                             Button = Enumerate.TypeOfButton.DayOfWeek,
                             Week = data.Week,
-                            Day = Enumerate.TypeOfDay.Monday,
+                            Day = Enumerate.TypeOfDay.Mo,
                             Lesson = Enumerate.TypeOfLesson.None
                                 }.Crypt()), //for read from (for example NumeratorMonday.txt)
                     InlineKeyboardButton.WithCallbackData(
@@ -224,7 +224,7 @@ namespace Tg_Bot.ServiceClass
                         callbackData: new InlineData(){
                             Button = Enumerate.TypeOfButton.DayOfWeek,
                             Week = data.Week,
-                            Day = Enumerate.TypeOfDay.Tuesday,
+                            Day = Enumerate.TypeOfDay.Tu,
                             Lesson = Enumerate.TypeOfLesson.None
                                 }.Crypt())
                 },
@@ -235,7 +235,7 @@ namespace Tg_Bot.ServiceClass
                         callbackData: new InlineData(){
                             Button = Enumerate.TypeOfButton.DayOfWeek,
                             Week = data.Week,
-                            Day = Enumerate.TypeOfDay.Wednesday,
+                            Day = Enumerate.TypeOfDay.We,
                             Lesson = Enumerate.TypeOfLesson.None
                                 }.Crypt()),
                     InlineKeyboardButton.WithCallbackData(
@@ -243,7 +243,7 @@ namespace Tg_Bot.ServiceClass
                         callbackData: new InlineData(){
                             Button = Enumerate.TypeOfButton.DayOfWeek,
                             Week = data.Week,
-                            Day = Enumerate.TypeOfDay.Thursday,
+                            Day = Enumerate.TypeOfDay.Th,
                             Lesson = Enumerate.TypeOfLesson.None
                                 }.Crypt())
                 },
@@ -254,7 +254,7 @@ namespace Tg_Bot.ServiceClass
                         callbackData: new InlineData(){
                             Button = Enumerate.TypeOfButton.DayOfWeek,
                             Week = data.Week,
-                            Day = Enumerate.TypeOfDay.Friday,
+                            Day = Enumerate.TypeOfDay.Fr,
                             Lesson = Enumerate.TypeOfLesson.None
                                 }.Crypt())
                 }
