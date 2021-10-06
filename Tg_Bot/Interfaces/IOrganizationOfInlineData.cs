@@ -1,20 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Tg_Bot.Enumerate;
+﻿using Tg_Bot.Enumerate;
+
 namespace Tg_Bot.Interfaces
 {
     interface IOrganizationOfInlineData
     {
-        public TypeOfWeek TypeOfWeek { get; set; }
-        public TypeOfDay TypeOfDay { get; set; }
-        public TypeOfLesson TypeOfLesson { get; set; }
-        public TypeOfButton TypeOfButton { get; set; }
-        bool Compare(IOrganizationOfInlineData other);
+        TypeOfWeek Week { get; set; }
+        TypeOfDay Day { get; set; }
+        TypeOfLesson Lesson { get; set; }
+        TypeOfButton Button { get; set; }
+        string Additionally { get; set; }
         string Crypt();
-        IOrganizationOfInlineData Parse();
-        IOrganizationOfInlineData TryParse( bool onException);
+
+        void ParseIn(string jsonData);
     }
 }
