@@ -243,7 +243,7 @@ namespace Tg_Bot
 
                             TelegramBotLogger.PrintInfo(e.Message.From.FirstName, e.Message.From.Id.ToString(), e.Message.From.Username, TypeOfButton.ToServer.ToString());
 
-                            await client.SendTextMessageAsync(msg.Chat.Id, FileName.DonateLink);
+                            await client.SendTextMessageAsync(msg.Chat.Id, File.ReadAllText(FileName.DonateLink));
                             await client.SendTextMessageAsync(msg.Chat.Id, "Или воспользуйтесь Qr-кодом для совершения доната, заранее спасибки🤗😌");
                             await client.SendPhotoAsync(msg.Chat.Id, FileName.DonateQrCode);
                             break;

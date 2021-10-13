@@ -20,7 +20,7 @@ namespace Tg_Bot.ServiceClass
         public static string Welcome_text { get; } = MainDir + @"Welcome.txt";
         public static string QuesAnsw { get; } = MainDir + @"QuesAnsw.txt";
         public static string TimeTable { get; } = @"https://github.com/maxpe3447/Tg_Bot/blob/develop/Tg_Bot/Image/CallBoard.jpg?raw=true";
-        public static string DonateLink { get; } = @"https://send.monobank.ua/jar/5BrEcDMsJL";
+        public static string DonateLink { get; } = MainDir + @"donate.txt";
         public static string DonateQrCode { get; } = @"https://github.com/maxpe3447/Tg_Bot/blob/develop/Tg_Bot/Image/QrCode.png?raw=true";
     }
 }
