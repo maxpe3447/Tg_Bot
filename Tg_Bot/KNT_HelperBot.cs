@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using System.Threading;
 using System.IO;
@@ -10,6 +9,8 @@ using Telegram.Bot.Types.ReplyMarkups;
 using Tg_Bot.ServiceClass;
 using Tg_Bot.Interfaces;
 using Tg_Bot.Enumerate;
+using Microsoft.Data.Sqlite;
+using System.Linq;
 
 namespace Tg_Bot
 {
@@ -21,7 +22,10 @@ namespace Tg_Bot
         public delegate void PauseForWork();
         public event PauseForWork PauseForWorking;
 
-        Server.Server server;
+        private Server.Server server;
+
+        private Timer timer;
+        private SortedDictionary<DateTime, string> events;
 
         public KNT_HelperBot()
         {
@@ -32,6 +36,62 @@ namespace Tg_Bot
 
             server = new Server.Server();
 
+            Init();
+            
+        }
+        void Init()
+        {
+            server.NewEvent += Server_NewEvent;
+            timer = new Timer(TimerCallback, null, 0, 1000);
+            events = new SortedDictionary<DateTime, string>();
+        }
+
+        private void TimerCallback(Object o)
+        {
+            if (events == null || events.Count == 0)
+            {
+                return;
+            }
+            if(events.First().Key <= DateTime.Now.ToUniversalTime())
+            {
+                SendAllMsg(events.First().Value);
+                events.Remove(events.First().Key);
+            }
+        }
+        private async void SendAllMsg(string msg)
+        {
+            using (SqliteConnection connection = new SqliteConnection($"Data Source ={FileName.DBName}"))
+            {
+                connection.Open();
+                SqliteCommand command = new SqliteCommand();
+
+                command.Connection = connection;
+
+                command.CommandText = "SELECT * FROM FriendUsers";
+
+                using (SqliteDataReader reader = command.ExecuteReader())
+                {
+                    if (reader.HasRows)
+                    {
+                        while (reader.Read())
+                        {
+                            try
+                            {
+                                await client.SendTextMessageAsync(long.Parse(reader["Tg_id"].ToString()), $"{msg}");
+                            }
+                            catch (Exception ex)
+                            {
+                                Console.WriteLine($"No chat: {reader["Name"]}");
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        private void Server_NewEvent()
+        {
+            DateTime date = DateTime.ParseExact(server.LastEvent.Item1, "dd/MM/yyyy HH:mm:ss tt", null);
+            events.Add(date, server.LastEvent.Item2);
         }
 
         [Obsolete]
@@ -48,9 +108,6 @@ namespace Tg_Bot
                 client.StopReceiving();
             }
             server.TurnOnAsync();
-
-            //var sMsg = new ScheduledMsg();
-            //sMsg.SenderAllNewUsers(new DateTime(2021, 08, 31, 06, 12, 00), client, "Извините за неудобства в алгоритме был баг, который сейчас устранен, пожалуйста перезапустите бота и пользуйтесь");
         }
 
         [Obsolete]
@@ -108,21 +165,6 @@ namespace Tg_Bot
 
                 if (!userInBlackList)
                 {
-                    //if (!TelegramClientCheck.IsAdmins(msg.From)){
-                        //DateTime release = new DateTime(2021, 08, 31, 05, 30, 00);
-                        //release = release.ToUniversalTime();
-
-                        //if (DateTime.Now.ToUniversalTime() < release)
-                        //{
-                        //    TimeSpan date = release.Subtract(DateTime.Now.ToUniversalTime());
-
-                        //    TelegramBotLogger.PrintInfo(e.Message.From.FirstName, e.Message.From.Id.ToString(), e.Message.From.Username, msg.Text);
-
-                        //    await client.SendTextMessageAsync(msg.Chat.Id, $"До релиза бота осталось: {date.Days} д. {date.Hours} ч. {date.Minutes} м.");
-                        //    return;
-                        //}
-                    //}
-
                     if (msg.Text == "/start")
                     {
                         if (!TelegramClientCheck.IsFriend(msg.From))

@@ -13,6 +13,8 @@ namespace Server
     class Server
     {
         //public string Ip { get; set; } = "192.168.1.10";
+        public delegate void CreateEventHandler();
+        public event CreateEventHandler NewEvent;
         public int Port { get; set; } = 8085;
 
         public string Result { get; private set; }
@@ -20,7 +22,7 @@ namespace Server
         private Socket listener;
         private string mainDir = Tg_Bot.ServiceClass.FileName.MainDir;
         private string OkCode { get; set; } = "\0";
-        private char separator { get; } = '|';
+        private char Separator { get; } = '|';
         private Socket tcpSocket;
         public Server() {}
         public async void  TurnOnAsync()
@@ -99,6 +101,9 @@ namespace Server
                 case CodeForServer.GetTableNames:
                     GetTablesFromDB();
                     break;
+                case CodeForServer.GetUsers:
+                    GetUsers();
+                    break;
                 default:
                     break;
             }
@@ -109,16 +114,43 @@ namespace Server
             for(int i = 0; i < dir.Length; i++)
                 dir[i] = dir[i].Insert(dir[i].Length, "...");
 
-            string dirAnswer = string.Join(separator, dir);
+            string dirAnswer = string.Join(Separator, dir);
             SendData(dirAnswer);
 
             AnswerFromClient();
 
             string[] files = Directory.GetFiles(mainDir);
-            string answer = string.Join(separator, files);
+            string answer = string.Join(Separator, files);
 
             SendData(answer);
             Console.WriteLine($"Server -> GetFileName\n");
+        }
+        private void GetUsers()
+        {
+            SendData(OkCode);
+
+            var result = new List<string>();
+            using (var connection = new SqliteConnection($"Data Source={Tg_Bot.ServiceClass.FileName.DBName}"))
+            {
+                connection.Open();
+                var commond = connection.CreateCommand();
+
+                commond.CommandText = "SELECT * FROM  NewUsers";
+
+                using (var reader = commond.ExecuteReader())
+                {
+                    if (reader.HasRows)
+                    {
+                        while (reader.Read())
+                        {
+                            result.Add(reader["Name"].ToString());
+                        }
+                    }
+                }
+
+            }
+            SendData(string.Join(Separator, result.ToArray()));
+
         }
         private void SendTextFromFile()
         {
@@ -172,7 +204,8 @@ namespace Server
             using (File.Create(mainDir + fileName))
                 SendData(OkCode);
         }
-
+        
+        public (string, string) LastEvent { get; private set; }
         private void CreateEvent()
         {
             SendData(OkCode);
@@ -182,10 +215,13 @@ namespace Server
             SendData(OkCode);
 
             string msg = AnswerFromClient();
+            LastEvent = (date: date, msg: msg);
+            NewEvent?.Invoke();
+            
+            //Console.WriteLine($"Server -> dateTime: {date}\nmsg:\n{msg}\n****\n");
+            //Console.WriteLine($"Server -> dateTime: {DateTime.Now.ToUniversalTime()}\nmsg:\n{msg}\n****\n");
 
-            Console.WriteLine($"Server -> dateTime: {date}\nmsg:\n{msg}\n****\n");
-
-            Result = date + separator + msg;
+            Result = date + Separator + msg;
         }
         private void EditFileName()
         {
@@ -216,7 +252,7 @@ namespace Server
             for (int i = 0; i < dir.Length; i++)
                 dir[i] = dir[i].Insert(dir[i].Length, "...");
 
-            string dirAnswer = string.Join(separator, dir);
+            string dirAnswer = string.Join(Separator, dir);
 
             if (dirAnswer != string.Empty)
                 SendData(dirAnswer);
@@ -226,7 +262,7 @@ namespace Server
                 AnswerFromClient();
 
             string[] files = Directory.GetFiles(mainDir + getDir);
-            string answer = string.Join(separator, files);
+            string answer = string.Join(Separator, files);
 
             SendData(answer);
             Console.WriteLine($"Server -> GetFileName\n");
@@ -255,7 +291,7 @@ namespace Server
                 }
 
             }
-            SendData(string.Join(separator, result.ToArray()));
+            SendData(string.Join(Separator, result.ToArray()));
         }
         private void SendData(string data)
         {
@@ -271,6 +307,6 @@ namespace Server
 
     enum CodeForServer
     {
-        None, ForConnect, GetFiles, GetTextFromFile, SetTextFromFile, CreateNewFile, CreateEvent, EditFileName, DeleteFile, GetFilesFromDir, GetTableNames
+        None, ForConnect, GetFiles, GetTextFromFile, SetTextFromFile, CreateNewFile, CreateEvent, EditFileName, DeleteFile, GetFilesFromDir, GetTableNames, GetUsers
     }
 }
